@@ -1,0 +1,139 @@
+﻿
+> frontend@0.0.0 build
+> vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 2218 modules transformed.
+node.exe : 
+[31mΓ£ù[39m Build 
+failed in 12.20s
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Users\ARUNKUMAR\AppD
+ata\Roam ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: ([31mΓ£   
+ ù[39m Build fai    
+led in 12.20s:St    
+ring) [], Remote    
+Exception
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+[31merror during 
+build:
+[31msrc/pages/studen
+t/ComplaintsPage.jsx 
+(15:9): 
+"complaintService" 
+is not exported by "s
+rc/services/index.js"
+, imported by "src/pa
+ges/student/Complaint
+sPage.jsx".[31m
+file: [36mC:/Users/A
+RUNKUMAR/Documents/pr
+ince college/frontend
+/src/pages/student/Co
+mplaintsPage.jsx:15:9
+[31m
+[33m
+13:     Send
+14: } from 
+'lucide-react';
+15: import { 
+complaintService } 
+from 
+'../../services';
+             ^
+16: 
+17: export const 
+ComplaintsPage = () 
+=> {
+[31m
+    at 
+getRollupError (file:
+///C:/Users/ARUNKUMAR
+/Documents/prince%20c
+ollege/frontend/node_
+modules/rollup/dist/e
+s/shared/parseAst.js:
+402:41)
+    at error (file://
+/C:/Users/ARUNKUMAR/D
+ocuments/prince%20col
+lege/frontend/node_mo
+dules/rollup/dist/es/
+shared/parseAst.js:39
+8:42)
+    at Module.error (
+file:///C:/Users/ARUN
+KUMAR/Documents/princ
+e%20college/frontend/
+node_modules/rollup/d
+ist/es/shared/node-en
+try.js:17040:16)
+    at 
+Module.traceVariable 
+(file:///C:/Users/ARU
+NKUMAR/Documents/prin
+ce%20college/frontend
+/node_modules/rollup/
+dist/es/shared/node-e
+ntry.js:17452:29)
+    at ModuleScope.fi
+ndVariable (file:///C
+:/Users/ARUNKUMAR/Doc
+uments/prince%20colle
+ge/frontend/node_modu
+les/rollup/dist/es/sh
+ared/node-entry.js:15
+070:39)
+    at ReturnValueSco
+pe.findVariable (file
+:///C:/Users/ARUNKUMA
+R/Documents/prince%20
+college/frontend/node
+_modules/rollup/dist/
+es/shared/node-entry.
+js:5673:38)
+    at FunctionBodySc
+ope.findVariable (fil
+e:///C:/Users/ARUNKUM
+AR/Documents/prince%2
+0college/frontend/nod
+e_modules/rollup/dist
+/es/shared/node-entry
+.js:5673:38)
+    at ReturnValueSco
+pe.findVariable (file
+:///C:/Users/ARUNKUMA
+R/Documents/prince%20
+college/frontend/node
+_modules/rollup/dist/
+es/shared/node-entry.
+js:5673:38)
+    at FunctionBodySc
+ope.findVariable (fil
+e:///C:/Users/ARUNKUM
+AR/Documents/prince%2
+0college/frontend/nod
+e_modules/rollup/dist
+/es/shared/node-entry
+.js:5673:38)
+    at BlockScope.fin
+dVariable (file:///C:
+/Users/ARUNKUMAR/Docu
+ments/prince%20colleg
+e/frontend/node_modul
+es/rollup/dist/es/sha
+red/node-entry.js:567
+3:38)[39m
