@@ -2,9 +2,10 @@
 
 /* 
   Tailwind v4: Define manual dark mode strategy.
-  The warning "Unknown at rule @custom-variant" is a common IDE limitation with TWv4.
+  Note: "@variant" is the Tailwind v4 at-rule for custom variants. 
+  If your IDE shows a warning, it's a known limitation with TWv4 support.
 */
-@custom-variant dark (&:where(.dark, .dark *));
+@variant dark (&:where(.dark, .dark *));
 
 :root {
   --color-primary-indigo: #4f46e5;
