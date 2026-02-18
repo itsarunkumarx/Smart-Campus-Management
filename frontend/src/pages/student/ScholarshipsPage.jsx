@@ -10,7 +10,8 @@ import {
     FileText,
     ArrowRight,
     TrendingUp,
-    ShieldCheck
+    ShieldCheck,
+    X
 } from 'lucide-react';
 import { generalService, studentService } from '../../services';
 import { useAuth } from '../../hooks/useAuth';
@@ -21,6 +22,8 @@ export const ScholarshipsPage = () => {
     const [loading, setLoading] = useState(true);
     const [isApplying, setIsApplying] = useState(null);
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [selectedScholarship, setSelectedScholarship] = useState(null);
+    const [documentUrl, setDocumentUrl] = useState('');
 
     useEffect(() => {
         fetchScholarships();
@@ -63,6 +66,10 @@ export const ScholarshipsPage = () => {
             setUploading(false);
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         }
+    };
+
+    const openApplicationModal = (scholarship) => {
+        setSelectedScholarship(scholarship);
     };
 
     const handleApply = async (e) => {
