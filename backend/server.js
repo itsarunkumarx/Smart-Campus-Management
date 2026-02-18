@@ -31,6 +31,9 @@ const path = require('path');
 
 const app = express();
 
+// Trust proxy for secure cookies on Render/Heroku
+app.set('trust proxy', 1);
+
 // Connect to MongoDB
 connectDB();
 
@@ -45,13 +48,26 @@ const limiter = rateLimit({
 });
 
 // Middleware
-app.use(helmet()); // Security headers
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
 app.use(cors({
-    origin: [
-        process.env.FRONTEND_URL || 'http://localhost:5173',
-        'http://localhost:5174'
-    ],
-    credentials: true, // Allow cookies
+    origin: (origin, callback) => {
+        const allowedOrigins = [
+            process.env.FRONTEND_URL,
+            'http://localhost:5173',
+            'http://localhost:5174',
+            /\.vercel\.app$/ // Allow any vercel subdomains
+        ];
+
+        if (!origin || allowedOrigins.some(o => typeof o === 'string' ? o === origin : o.test(origin))) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
 }));
 app.use(compression()); // Compress responses
 app.use(express.json()); // Parse JSON bodies

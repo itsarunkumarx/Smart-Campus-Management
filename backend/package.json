@@ -1,6 +1,9 @@
 {
   "name": "smart-campus-backend",
   "version": "1.0.0",
+  "engines": {
+    "node": "22.x"
+  },
   "description": "Smart Campus Management System Backend",
   "main": "server.js",
   "scripts": {

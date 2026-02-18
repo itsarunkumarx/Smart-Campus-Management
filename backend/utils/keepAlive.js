@@ -10,39 +10,56 @@ const keepAlive = () => {
     const backendUrl = process.env.BACKEND_URL;
 
     if (!backendUrl) {
-        console.log('⚠️  BACKEND_URL not set in .env. Skipping self-ping.');
+        console.log('⚠️  [Institutional Guard] BACKEND_URL not set. Eternal Pulse skipped.');
         return;
     }
 
-    // Ping every 14 minutes (Render sleeps after 15 mins of inactivity)
+    // Ping every 14 minutes (Render/Free tiers often sleep after 15 mins)
     const interval = 14 * 60 * 1000;
 
-    setInterval(async () => {
+    const performPing = async (retryCount = 0) => {
+        const timestamp = new Date().toLocaleTimeString();
+
         try {
-            // 1. Self-ping backend
+            // 1. Self-ping backend health endpoint
             const protocol = backendUrl.startsWith('https') ? https : http;
 
-            protocol.get(`${backendUrl}/health`, (res) => {
-                console.log(`📡 Keep-alive: Self-ping status code: ${res.statusCode}`);
-            }).on('error', (err) => {
-                console.error(`❌ Keep-alive: Self-ping error: ${err.message}`);
+            const req = protocol.get(`${backendUrl}/health`, (res) => {
+                if (res.statusCode === 200) {
+                    console.log(`📡 [Pulse ${timestamp}] System Status: OPERATIONAL (200 OK)`);
+                } else {
+                    console.warn(`⚠️ [Pulse ${timestamp}] System Warning: Status Code ${res.statusCode}`);
+                }
             });
 
-            // 2. Ping MongoDB
+            req.on('error', (err) => {
+                console.error(`❌ [Pulse ${timestamp}] Transmission Failure: ${err.message}`);
+                if (retryCount < 3) {
+                    console.log(`🔄 [Pulse] Retrying transmission (${retryCount + 1}/3)...`);
+                    setTimeout(() => performPing(retryCount + 1), 5000);
+                }
+            });
+
+            // 2. Database Connection Guard
             if (mongoose.connection.readyState === 1) {
-                // connection.db is available when state is 1 (connected)
                 await mongoose.connection.db.admin().ping();
-                console.log('📡 Keep-alive: MongoDB pinged successfully');
+                // We don't log every DB ping to keep logs clean, just silent assurance
             } else {
-                console.log('⚠️  Keep-alive: MongoDB not connected, skipping ping.');
+                console.error(`🚨 [Pulse ${timestamp}] Critical: Database Grid Terminated.`);
             }
 
         } catch (error) {
-            console.error(`❌ Keep-alive error: ${error.message}`);
+            console.error(`🚨 [Pulse ${timestamp}] Internal Exception: ${error.message}`);
         }
-    }, interval);
+    };
 
-    console.log(`🚀 Keep-alive mechanism started (Interval: 14 mins). Pinging: ${backendUrl}`);
+    // Initial pulse
+    performPing();
+
+    // Scheduled pulses
+    setInterval(performPing, interval);
+
+    console.log(`🚀 [Eternal Pulse] Initialized. Heartbeat Interval: 14m | Target: ${backendUrl}`);
 };
 
 module.exports = keepAlive;
