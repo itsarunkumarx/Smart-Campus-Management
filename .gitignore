@@ -38,3 +38,6 @@ coverage/
 .temp/
 .cache/
 *.tmp
+
+# Uploads
+backend/public/uploads/
