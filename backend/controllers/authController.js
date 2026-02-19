@@ -3,8 +3,6 @@ const generateToken = require('../utils/generateToken');
 const { createNotification } = require('../utils/notificationUtils');
 const { OAuth2Client } = require('google-auth-library');
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
 // @desc    Register a new student
 // @route   POST /api/auth/register
 // @access  Public
@@ -182,14 +180,14 @@ const updateProfile = async (req, res) => {
         }
 
         // Update other fields
-        user.name = req.body.name || user.name;
+        user.name = req.body.name !== undefined ? req.body.name : user.name;
         user.bio = req.body.bio !== undefined ? req.body.bio : user.bio;
-        user.phone = req.body.phone || user.phone;
-        user.skills = req.body.skills || user.skills;
-        user.certifications = req.body.certifications || user.certifications;
-        user.profileImage = req.body.profileImage || user.profileImage;
-        user.department = req.body.department || user.department;
-        user.year = req.body.year || user.year;
+        user.phone = req.body.phone !== undefined ? req.body.phone : user.phone;
+        user.skills = req.body.skills !== undefined ? req.body.skills : user.skills;
+        user.certifications = req.body.certifications !== undefined ? req.body.certifications : user.certifications;
+        user.profileImage = req.body.profileImage !== undefined ? req.body.profileImage : user.profileImage;
+        user.department = req.body.department !== undefined ? req.body.department : user.department;
+        user.year = req.body.year !== undefined ? req.body.year : user.year;
 
         // Academic Info (Student)
         if (req.body.academicInfo) {
@@ -389,11 +387,13 @@ const googleLogin = async (req, res) => {
         const { token } = req.body;
 
         if (!process.env.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID.includes('your-google-client-id')) {
+            console.error('❌ Google Auth Failed: Missing or placeholder Client ID');
             return res.status(400).json({
                 message: 'Institutional Google Login requires a valid Client ID in .env for token verification.'
             });
         }
 
+        const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
         const ticket = await client.verifyIdToken({
             idToken: token,
             audience: process.env.GOOGLE_CLIENT_ID,
@@ -426,6 +426,8 @@ const googleLogin = async (req, res) => {
                 email,
                 password: Math.random().toString(36).slice(-12), // Secure random password
                 role: 'student',
+                department: 'Computer Science', // Default for initial sync
+                year: 1, // Default for initial sync
                 profileImage: picture,
                 isProfileComplete: false,
             });
@@ -452,7 +454,10 @@ const googleLogin = async (req, res) => {
         });
     } catch (error) {
         console.error('Google Auth Error:', error);
-        res.status(401).json({ message: 'Institutional Google authentication failed' });
+        res.status(401).json({
+            message: 'Institutional Google authentication failed',
+            details: error.message
+        });
     }
 };
 

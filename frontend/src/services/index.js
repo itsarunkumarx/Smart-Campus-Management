@@ -1,5 +1,7 @@
 import api from './api';
 
+export { api };
+
 export const authService = {
     register: async (userData) => {
         const response = await api.post('/auth/register', userData);
@@ -154,6 +156,11 @@ export const adminService = {
 
     getAISummary: async () => {
         const response = await api.get('/admin/ai-summary');
+        return response.data;
+    },
+
+    removePost: async (id) => {
+        const response = await api.delete(`/admin/post/${id}`);
         return response.data;
     },
 };

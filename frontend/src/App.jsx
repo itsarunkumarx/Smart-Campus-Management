@@ -27,6 +27,7 @@ import { AnnouncementsPage } from './pages/faculty/AnnouncementsPage';
 import { StudentManagement } from './pages/faculty/StudentManagement';
 import { FacultyEventsPage } from './pages/faculty/FacultyEventsPage';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminProfile } from './pages/admin/AdminProfile';
 import { UserManagement } from './pages/admin/UserManagement';
 import { ComplaintManagement } from './pages/admin/ComplaintManagement';
 import { AcademicControl } from './pages/admin/AcademicControl';
@@ -232,6 +233,14 @@ function AppRoutes() {
               }
             />
             <Route
+              path="/admin/profile"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/admin/users"
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
@@ -250,7 +259,7 @@ function AppRoutes() {
             <Route
               path="/admin/academic"
               element={
-                <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedRoute allowedRoles={['admin', 'faculty']}>
                   <AcademicControl />
                 </ProtectedRoute>
               }

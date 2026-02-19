@@ -18,6 +18,8 @@ const postSchema = new mongoose.Schema(
                 type: { type: String, enum: ['image', 'video'], default: 'image' },
             }
         ],
+        authorDepartment: String,
+        authorYear: Number,
         tags: [String],
         likes: [
             {

@@ -43,8 +43,14 @@ export const AuthProvider = ({ children }) => {
         setUser({ ...user, ...updatedData });
     };
 
+    const updateProfile = async (profileData) => {
+        const data = await authService.updateProfile(profileData);
+        setUser(data);
+        return data;
+    };
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, updateUser, checkAuth, googleLogin }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, updateUser, updateProfile, checkAuth, googleLogin }}>
             {children}
         </AuthContext.Provider>
     );

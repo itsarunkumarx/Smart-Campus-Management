@@ -14,6 +14,8 @@ const createPost = async (req, res) => {
             media: media || [],
             tags: tags || [],
             visibility: visibility || 'public',
+            authorDepartment: req.user.department,
+            authorYear: req.user.year
         });
 
         const populatedPost = await Post.findById(post._id).populate('userId', 'name profileImage role department');
@@ -57,8 +59,8 @@ const getPosts = async (req, res) => {
         if (req.user.role === 'student') {
             filter.$or = [
                 { visibility: 'public' },
-                { visibility: 'department', 'userId.department': req.user.department },
-                { visibility: 'year', 'userId.year': req.user.year },
+                { visibility: 'department', authorDepartment: req.user.department },
+                { visibility: 'year', authorYear: req.user.year },
             ];
         }
 

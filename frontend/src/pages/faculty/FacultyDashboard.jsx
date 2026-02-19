@@ -46,6 +46,7 @@ export const FacultyDashboard = () => {
         { label: 'Push Announcement', path: '/faculty/announcements', icon: <Bell size={20} />, color: 'bg-slate-900' },
         { label: 'Manage Students', path: '/faculty/students', icon: <Users size={20} />, color: 'bg-gold-metallic/80' },
         { label: 'Schedule Event', path: '/faculty/events', icon: <PlusCircle size={20} />, color: 'bg-slate-700' },
+        { label: 'Academic Control', path: '/admin/academic', icon: <Award size={20} />, color: 'bg-amber-600' },
     ];
 
     return (

@@ -17,6 +17,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { postService } from '../../services';
 import { useAuth } from '../../hooks/useAuth';
+import { resolveAssetUrl } from '../../utils/assetUtils';
 
 export const DetailedPostPage = () => {
     const { id } = useParams();
@@ -99,9 +100,9 @@ export const DetailedPostPage = () => {
                         {post.media?.length > 0 ? (
                             <div className="relative group">
                                 {post.media[0].type === 'image' ? (
-                                    <img src={post.media[0].url} className="w-full aspect-square md:aspect-video object-cover rounded-[2rem]" alt="Manifest" />
+                                    <img src={resolveAssetUrl(post.media[0].url)} className="w-full aspect-square md:aspect-video object-cover rounded-[2rem]" alt="Manifest" />
                                 ) : (
-                                    <video src={post.media[0].url} controls className="w-full aspect-square md:aspect-video object-cover rounded-[2rem]" />
+                                    <video src={resolveAssetUrl(post.media[0].url)} controls className="w-full aspect-square md:aspect-video object-cover rounded-[2rem]" />
                                 )}
                             </div>
                         ) : (
@@ -145,7 +146,7 @@ export const DetailedPostPage = () => {
                     <div className="glass-card p-6 border-slate-100 dark:border-slate-800 flex items-center gap-6">
                         <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-900/50 p-1">
                             {post.userId?.profileImage ? (
-                                <img src={post.userId.profileImage} className="w-full h-full object-cover rounded-xl" />
+                                <img src={resolveAssetUrl(post.userId.profileImage)} className="w-full h-full object-cover rounded-xl" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-xl font-black text-indigo-600 uppercase">
                                     {post.userId?.name?.charAt(0)}

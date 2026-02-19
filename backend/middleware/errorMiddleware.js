@@ -22,7 +22,17 @@ const errorHandler = (err, req, res, next) => {
     // Mongoose validation error
     if (err.name === 'ValidationError') {
         const message = Object.values(err.errors).map((val) => val.message);
-        error = { message, statusCode: 400 };
+        error = { message: message.join(', '), statusCode: 400 };
+    }
+
+    // Multer error (File too large)
+    if (err.code === 'LIMIT_FILE_SIZE') {
+        error = { message: 'Institutional security protocol: Asset exceeds high-bandwidth limit (50MB).', statusCode: 400 };
+    }
+
+    // Multer error (Invalid file type or generic)
+    if (err.message && err.message.includes('Institutional security protocol')) {
+        error = { message: err.message, statusCode: 400 };
     }
 
     res.status(error.statusCode || 500).json({

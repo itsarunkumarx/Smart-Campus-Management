@@ -18,6 +18,7 @@ import {
     ChevronRight,
     Tag as TagIcon
 } from 'lucide-react';
+import { resolveAssetUrl } from '../../utils/assetUtils';
 
 export const PostsPage = () => {
     const { user } = useAuth();
@@ -166,7 +167,7 @@ const PostCard = ({ post, currentUser, onLike, onDelete, onReport }) => {
                             className="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center p-1 cursor-pointer border border-transparent hover:border-indigo-400 transition-all"
                         >
                             {post.userId?.profileImage ? (
-                                <img src={post.userId.profileImage} alt={post.userId.name} className="w-full h-full object-cover rounded-xl" />
+                                <img src={resolveAssetUrl(post.userId.profileImage)} alt={post.userId.name} className="w-full h-full object-cover rounded-xl" />
                             ) : (
                                 <div className="text-xl font-black text-indigo-600 uppercase">{post.userId?.name?.charAt(0)}</div>
                             )}
@@ -212,9 +213,9 @@ const PostCard = ({ post, currentUser, onLike, onDelete, onReport }) => {
                     {post.media?.length > 0 && (
                         <div className="rounded-[2rem] overflow-hidden bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 group relative">
                             {post.media[0].type === 'image' ? (
-                                <img src={post.media[0].url} className="w-full max-h-[500px] object-cover transition-transform duration-700 group-hover:scale-105" alt="Post" />
+                                <img src={resolveAssetUrl(post.media[0].url)} className="w-full max-h-[500px] object-cover transition-transform duration-700 group-hover:scale-105" alt="Post" />
                             ) : (
-                                <video src={post.media[0].url} className="w-full max-h-[500px] object-cover" />
+                                <video src={resolveAssetUrl(post.media[0].url)} className="w-full max-h-[500px] object-cover" />
                             )}
                             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <span className="bg-white/90 backdrop-blur-md px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">View Intelligence</span>

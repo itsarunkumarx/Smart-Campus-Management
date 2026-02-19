@@ -30,6 +30,7 @@ export const Sidebar = () => {
         { path: '/faculty/attendance', label: 'Mark Attendance', icon: '✅' },
         { path: '/faculty/students', label: 'Students', icon: '👥' },
         { path: '/faculty/events', label: 'Events', icon: '🎉' },
+        { path: '/admin/academic', label: 'Academic Control', icon: '🎓' },
         { path: '/ai-assistant', label: 'AI Assistant', icon: '🤖' },
         { path: '/tasks', label: 'Tasks', icon: '📝' },
         { path: '/search', label: 'Search', icon: '🔍' },
@@ -38,6 +39,7 @@ export const Sidebar = () => {
 
     const adminLinks = [
         { path: '/admin/dashboard', label: 'Dashboard', icon: '📊' },
+        { path: '/admin/profile', label: 'Profile', icon: '👤' },
         { path: '/admin/users', label: 'Global Registry', icon: '👥' },
         { path: '/admin/academic', label: 'Academic Control', icon: '🎓' },
         { path: '/admin/complaints', label: 'Grievance Hub', icon: '⚖️' },

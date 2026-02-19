@@ -6,7 +6,7 @@ import { GoogleLogin } from '@react-oauth/google';
 export const LoginPage = () => {
     const { role } = useParams();
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, googleLogin } = useAuth();
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -152,7 +152,10 @@ export const LoginPage = () => {
                                             default: navigate('/');
                                         }
                                     } catch (err) {
-                                        setError(err.response?.data?.message || 'Google Login failed. Please try again.');
+                                        const errorMsg = err.response?.data?.details
+                                            ? `Google Auth Error: ${err.response.data.details}`
+                                            : (err.response?.data?.message || 'Google Login failed. Please try again.');
+                                        setError(errorMsg);
                                     } finally {
                                         setLoading(false);
                                     }

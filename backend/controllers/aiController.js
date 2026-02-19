@@ -1,5 +1,8 @@
 const AILog = require('../models/AIlog');
+const KnowledgeItem = require('../models/KnowledgeItem');
+const SystemSettings = require('../models/SystemSettings');
 const { findContext } = require('../utils/knowledgeBase');
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 /**
  * @desc    Process AI Query with Institutional Knowledge
@@ -11,50 +14,83 @@ const processQuery = async (req, res) => {
         const { query, mode } = req.body;
         const user = req.user;
 
+        // Check global AI status
+        const settings = await SystemSettings.findOne();
+        if (settings && settings.ai && !settings.ai.isEnabled) {
+            return res.status(503).json({
+                message: 'Neural core suspended. Institutional protocol: AI services are currently inactive.',
+                isAIActive: false
+            });
+        }
+
         if (!query) {
             return res.status(400).json({ message: 'Query is required' });
         }
 
-        // Get context from Knowledge Base
-        const context = findContext(query);
+        // Fetch relevant dynamic knowledge from database
+        const dynamicKnowledge = await KnowledgeItem.find({
+            isActive: true,
+            $text: { $search: query }
+        }).limit(5);
 
-        // Generate intelligent response based on context and mode
-        let response = "";
+        const dynamicContext = dynamicKnowledge.map(item => `- ${item.category.toUpperCase()}: ${item.content}`).join('\n');
 
-        switch (context.category) {
-            case 'financial':
-                response = `Regarding institutional finances: ${context.data.tuition}. For payment delays, ${context.data.lateFee}. You can visit ${context.data.contact} for specifics.`;
-                break;
-            case 'scholarship':
-                response = `Institutional grants are managed via the Scholarship Hub. The ${context.data.merit.name} requires ${context.data.merit.eligibility}. Note: ${context.data.googleDrive}`;
-                break;
-            case 'academic':
-                if (query.toLowerCase().includes('department')) {
-                    response = `Prince College hosts the following major departments: ${context.data.departments.join(', ')}.`;
-                } else {
-                    response = `Academic Protocol: ${context.data.attendanceThreshold}. Internal marks are ${context.data.internalMarks}.`;
-                }
-                break;
-            case 'support':
-                response = `For assistance: ${context.data.complaints} Contact ${context.data.itSupport} for technical issues or visit the library between ${context.data.library}.`;
-                break;
-            case 'casual':
-                if (context.type === 'greeting') {
-                    const greeting = context.data.greetings[Math.floor(Math.random() * context.data.greetings.length)];
-                    response = `${greeting} I am fully trained on institutional protocols and casual campus inquiries.`;
-                } else if (context.type === 'joke') {
-                    response = context.data.jokes;
-                }
-                break;
-            default:
-                response = `I am the Neural Assistant of ${context.data.name}. While I am still learning every aspect of the college ecosystem, I can currently help you with: \n- Fee & Payment protocols \n- Scholarship eligibility \n- Academic department info \n- Attendance & Exam cycles \n\nWhat would you like to explore?`;
+        // Generate intelligent response using Real AI API
+        const systemPrompt = `
+You are the Prince College Neural Assistant, an intelligent AI trained on the institutional knowledge of Prince College of Engineering and Technology.
+Your goal is to assist students, faculty, and staff with academic, administrative, and campus-related queries.
+
+INSTITUTIONAL KNOWLEDGE:
+${dynamicContext || 'Consult institutional protocols for high-accuracy facts.'}
+
+CORE PROTOCOLS:
+- Name: Prince College of Engineering and Technology
+- Founded: 2006
+- Departments: CSE, AI&DS, IT, ECE, ME
+- Attendance: 75% mandatory for exam eligibility.
+- Internal Marks: 60% from assessments, 40% from assignments/attendance.
+- Support: Grievances resolved within 48 hours.
+
+TONE GUIDELINES:
+- Professional Mode: Authoritative, clear, and concise. Prefix responses with [System Message].
+- Casual Mode: Friendly, helpful, and use the user's name (${user.name}).
+- Academic Mode: Informative, scholarly, and focused on educational guidance.
+
+Current Mode: ${mode}
+User Query: ${query}
+`;
+
+        const apiResponse = await fetch(process.env.AI_BASE_URL || 'https://api.together.xyz/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.AI_API_KEY}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'http://localhost:5000', // Required by OpenRouter
+                'X-Title': 'Prince College Neural Assistant' // Optional but good for OpenRouter
+            },
+            body: JSON.stringify({
+                model: process.env.AI_MODEL || 'meta-llama/Llama-3-70b-chat-hf',
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: query }
+                ],
+                max_tokens: 512,
+                temperature: 0.7
+            })
+        });
+
+        const data = await apiResponse.json();
+
+        if (!apiResponse.ok) {
+            console.error('AI API Error:', data);
+            throw new Error('AI Gateway communication failure');
         }
 
-        // Add tone based on mode
-        if (mode === 'Professional') {
+        let response = data.choices[0].message.content;
+
+        // Final formatting based on mode if needed (though the prompt handles it)
+        if (mode === 'Professional' && !response.startsWith('[System Message]')) {
             response = `[System Message]: ${response}`;
-        } else if (mode === 'Casual') {
-            response = `Hey ${user.name}! ${response} Hope that helps!`;
         }
 
         // Log the AI interaction
@@ -63,9 +99,7 @@ const processQuery = async (req, res) => {
             userRole: user.role,
             query,
             response,
-            category: context.category === 'general' ? 'casual' :
-                context.category === 'financial' ? 'admin' :
-                    context.category === 'scholarship' ? 'career' : 'academic'
+            category: 'academic' // Default to academic for real AI
         });
 
         res.json({ response });

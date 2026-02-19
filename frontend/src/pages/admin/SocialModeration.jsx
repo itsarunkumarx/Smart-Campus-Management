@@ -58,7 +58,7 @@ export const SocialModeration = () => {
 
     const filteredPosts = posts.filter(p =>
         p.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.user?.name.toLowerCase().includes(searchTerm.toLowerCase())
+        p.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -129,13 +129,13 @@ export const SocialModeration = () => {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200 font-black">
-                                            {post.user?.name?.charAt(0).toUpperCase()}
+                                            {post.userId?.name?.charAt(0).toUpperCase()}
                                         </div>
                                         <div>
-                                            <p className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tight line-clamp-1">{post.user?.name}</p>
+                                            <p className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tight line-clamp-1">{post.userId?.name}</p>
                                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1">
                                                 <UserCircle2 size={10} />
-                                                {post.user?.role}
+                                                {post.userId?.role}
                                             </p>
                                         </div>
                                     </div>

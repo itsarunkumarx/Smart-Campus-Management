@@ -55,7 +55,7 @@ app.use(helmet({
 app.use(cors({
     origin: (origin, callback) => {
         const allowedOrigins = [
-            process.env.FRONTEND_URL,
+            process.env.FRONTEND_URL?.replace(/\/$/, ''),
             'http://localhost:5173',
             'http://localhost:5174',
             /\.vercel\.app$/ // Allow any vercel subdomains

@@ -5,6 +5,7 @@ const Placement = require('../models/Placement');
 const Scholarship = require('../models/Scholarship');
 const Notification = require('../models/Notification');
 const Post = require('../models/Post');
+const KnowledgeItem = require('../models/KnowledgeItem');
 const { createNotification } = require('../utils/notificationUtils');
 
 // @desc    Get admin dashboard analytics
@@ -368,6 +369,107 @@ const getAISummary = async (req, res) => {
     }
 };
 
+// @desc    Import AI knowledge items
+// @route   POST /api/admin/ai/knowledge/import
+// @access  Private (Admin)
+const importKnowledge = async (req, res) => {
+    try {
+        const { items } = req.body; // Array of { category, question, content, tags }
+
+        if (!Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ message: 'Institutional protocol: Batch items required for neural sync.' });
+        }
+
+        const formattedItems = items.map(item => {
+            const { _id, __v, ...sanitizedItem } = item;
+            return {
+                ...sanitizedItem,
+                createdBy: req.user._id
+            };
+        });
+
+        const result = await KnowledgeItem.insertMany(formattedItems, { ordered: false });
+
+        res.status(201).json({
+            message: `${result.length} knowledge items archived successfully.`,
+            count: result.length
+        });
+    } catch (error) {
+        console.error('Neural Ingestion Failure:', error);
+
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                message: 'Institutional protocol: Validation failure.',
+                details: Object.values(error.errors).map(err => err.message)
+            });
+        }
+
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'Duplicate knowledge node detected. Purge conflicting data first.' });
+        }
+
+        res.status(500).json({ message: `Neural Ingestion Exception: ${error.message}` });
+    }
+};
+
+// @desc    Get all AI knowledge items
+// @route   GET /api/admin/ai/knowledge
+// @access  Private (Admin)
+const getKnowledgeItems = async (req, res) => {
+    try {
+        const items = await KnowledgeItem.find()
+            .populate('createdBy', 'name role')
+            .sort({ createdAt: -1 });
+        res.json(items);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Delete AI knowledge item
+// @route   DELETE /api/admin/ai/knowledge/:id
+// @access  Private (Admin)
+const deleteKnowledgeItem = async (req, res) => {
+    try {
+        const item = await KnowledgeItem.findById(req.params.id);
+
+        if (!item) {
+            return res.status(404).json({ message: 'Knowledge item not found' });
+        }
+
+        await item.deleteOne();
+        res.json({ message: 'Knowledge item purged from neural core.' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Update AI knowledge item
+// @route   PUT /api/admin/ai/knowledge/:id
+// @access  Private (Admin)
+const updateKnowledgeItem = async (req, res) => {
+    try {
+        const { category, content, question, tags, isActive } = req.body;
+
+        const item = await KnowledgeItem.findById(req.params.id);
+
+        if (!item) {
+            return res.status(404).json({ message: 'Knowledge item not found' });
+        }
+
+        item.category = category || item.category;
+        item.content = content || item.content;
+        item.question = question !== undefined ? question : item.question;
+        item.tags = tags || item.tags;
+        item.isActive = isActive !== undefined ? isActive : item.isActive;
+
+        const updatedItem = await item.save();
+        res.json(updatedItem);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getDashboard,
     getUsers,
@@ -382,4 +484,8 @@ module.exports = {
     removePost,
     addFaculty,
     getAISummary,
+    importKnowledge,
+    getKnowledgeItems,
+    deleteKnowledgeItem,
+    updateKnowledgeItem,
 };

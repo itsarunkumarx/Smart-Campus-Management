@@ -63,14 +63,16 @@ export const CreatePostPage = () => {
             });
 
             if (response.data && response.data.url) {
-                const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                const baseUrl = apiUrl.replace(/\/api$/, '');
                 const fullUrl = `${baseUrl}${response.data.url}`;
                 setMediaUrl(fullUrl);
                 setMediaType(response.data.type || type);
             }
         } catch (error) {
             console.error('Asset Transmission Failed:', error);
-            alert('Security breach or network failure during asset archiving.');
+            const errorMessage = error.response?.data?.message || 'Security breach or network failure during asset archiving.';
+            alert(errorMessage);
         } finally {
             setUploading(false);
         }
@@ -82,9 +84,9 @@ export const CreatePostPage = () => {
 
         setLoading(true);
         try {
-            // Send original relative URL or full URL depending on backend preference.
-            // Our backend saves relative path, so we should ideally store that.
-            const relativeUrl = mediaUrl.replace(import.meta.env.VITE_API_URL || 'http://localhost:5000', '');
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const baseUrl = apiUrl.replace(/\/api$/, '');
+            const relativeUrl = mediaUrl.replace(baseUrl, '');
 
             await api.post('/posts', {
                 content,

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { authService } from '../../services';
+import { authService, api } from '../../services';
 
 export const SettingsPage = () => {
     const { user, updateProfile, logout } = useAuth();
@@ -68,15 +68,18 @@ export const SettingsPage = () => {
         formData.append('media', file);
 
         try {
-            const response = await authService.api.post('/upload', formData, {
+            const response = await api.post('/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            const fullUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${response.data.url}`;
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const baseUrl = apiUrl.replace(/\/api$/, '');
+            const fullUrl = `${baseUrl}${response.data.url}`;
             setAccountForm({ ...accountForm, profileImage: fullUrl });
             setMessage({ type: 'success', text: 'Profile image archived. Sync Identity to finalize.' });
         } catch (error) {
             console.error('Image upload failed:', error);
-            setMessage({ type: 'error', text: 'Asset archiving failed.' });
+            const errorMessage = error.response?.data?.message || 'Asset archiving failed.';
+            setMessage({ type: 'error', text: errorMessage });
         } finally {
             setUploading(false);
         }
