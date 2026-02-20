@@ -40,14 +40,19 @@ export const SearchPage = () => {
         }
     };
 
-    const handleFollow = async (userId) => {
+    const handleFollow = async (result) => {
         try {
-            await userService.followUser(userId);
+            if (result.isFollowing) {
+                await userService.unfollowUser(result._id);
+            } else {
+                await userService.followUser(result._id);
+            }
+
             setResults(results.map(r =>
-                r._id === userId ? { ...r, isFollowing: true } : r
+                r._id === result._id ? { ...r, isFollowing: !r.isFollowing } : r
             ));
         } catch (err) {
-            console.error('Follow failed', err);
+            console.error('Follow action failed', err);
         }
     };
 
@@ -133,7 +138,7 @@ export const SearchPage = () => {
 
                                 <div className="flex items-center gap-3 w-full md:w-auto">
                                     <button
-                                        onClick={() => handleFollow(result._id)}
+                                        onClick={() => handleFollow(result)}
                                         className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${result.isFollowing
                                             ? 'bg-slate-100 dark:bg-slate-800 text-gray-500'
                                             : 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95'

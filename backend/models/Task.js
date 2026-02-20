@@ -38,6 +38,14 @@ const taskSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        alarmSound: {
+            type: String,
+            default: 'digital_alarm',
+        },
+        isAlarmEnabled: {
+            type: Boolean,
+            default: true,
+        },
     },
     {
         timestamps: true,

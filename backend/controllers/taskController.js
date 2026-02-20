@@ -20,13 +20,15 @@ const getTasks = async (req, res) => {
 // @access  Private
 const createTask = async (req, res) => {
     try {
-        const { title, description, deadline, priority } = req.body;
+        const { title, description, deadline, priority, alarmSound, isAlarmEnabled } = req.body;
         const task = await Task.create({
             user: req.user._id,
             title,
             description,
             deadline,
-            priority
+            priority,
+            alarmSound,
+            isAlarmEnabled
         });
         res.status(201).json(task);
     } catch (error) {

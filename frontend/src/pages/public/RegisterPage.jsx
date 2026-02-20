@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../services';
-import { GoogleLogin } from '@react-oauth/google';
 
 export const RegisterPage = () => {
     const navigate = useNavigate();
@@ -100,36 +99,6 @@ export const RegisterPage = () => {
         }
     };
 
-    const handleGoogleSuccess = async (credentialResponse) => {
-        try {
-            setLoading(true);
-            const data = await authService.googleLogin(credentialResponse.credential);
-
-            if (data.mustChangePassword) {
-                navigate('/change-password');
-                return;
-            }
-
-            // Redirect based on role
-            switch (data.role) {
-                case 'student':
-                    navigate('/student/dashboard');
-                    break;
-                case 'faculty':
-                    navigate('/faculty/dashboard');
-                    break;
-                case 'admin':
-                    navigate('/admin/dashboard');
-                    break;
-                default:
-                    navigate('/');
-            }
-        } catch (err) {
-            setError(err.response?.data?.message || 'Google Registration failed. Please try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 transition-colors duration-500 relative overflow-hidden">
@@ -282,23 +251,6 @@ export const RegisterPage = () => {
                             )}
                         </button>
 
-                        <div className="relative flex items-center justify-center py-2">
-                            <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
-                            <div className="absolute bg-white dark:bg-slate-900 px-4 text-xs font-bold text-slate-400 uppercase tracking-widest transition-colors duration-500">
-                                or
-                            </div>
-                        </div>
-
-                        <div className="flex justify-center">
-                            <GoogleLogin
-                                onSuccess={handleGoogleSuccess}
-                                onError={() => setError('Google Registration initiation failed.')}
-                                useOneTap
-                                theme="filled_blue"
-                                shape="pill"
-                                size="large"
-                            />
-                        </div>
                     </form>
 
                     <div className="mt-8 text-center">

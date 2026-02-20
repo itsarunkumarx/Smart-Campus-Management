@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 /* 
-  Tailwind v4: Define manual dark mode strategy.
-  Note: "@variant" is the Tailwind v4 at-rule for custom variants. 
-  If your IDE shows a warning, it's a known limitation with TWv4 support.
+  Tailwind CSS v4: Manual Dark Mode Selector
+  Note: "@variant" is the core Tailwind v4 engine at-rule. 
+  The "Unknown at rule" IDE warning is a false positive; 
+  IDE linters are currently catching up to the v4 spec.
 */
 @variant dark (&:where(.dark, .dark *));
 
@@ -348,6 +349,38 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes wiggle {
+
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes bounce-subtle {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-wiggle {
+  animation: wiggle 0.3s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
 }
 
 .fade-in {

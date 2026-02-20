@@ -287,11 +287,20 @@ const searchUsers = async (req, res) => {
             }
             : {};
 
+        const currentUser = await User.findById(req.user._id).select('following');
         const users = await User.find(keyword)
             .find({ _id: { $ne: req.user._id } }) // Exclude current user
-            .select('name username profileImage department role');
+            .select('name username profileImage department role followers');
 
-        res.json(users);
+        const results = users.map(u => {
+            const userObj = u.toObject();
+            return {
+                ...userObj,
+                isFollowing: currentUser.following.some(id => id.toString() === u._id.toString())
+            };
+        });
+
+        res.json(results);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -309,12 +318,12 @@ const followUser = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        if (currentUser.following.includes(req.params.id)) {
+        if (currentUser.following.some(id => id.toString() === req.params.id)) {
             return res.status(400).json({ message: 'Already following this user' });
         }
 
         await userToFollow.updateOne({ $push: { followers: req.user._id } });
-        await currentUser.updateOne({ $push: { following: req.params.id } });
+        await currentUser.updateOne({ $push: { following: userToFollow._id } });
 
         // Notify the user being followed
         await createNotification({
@@ -345,7 +354,7 @@ const unfollowUser = async (req, res) => {
         }
 
         await userToUnfollow.updateOne({ $pull: { followers: req.user._id } });
-        await currentUser.updateOne({ $pull: { following: req.params.id } });
+        await currentUser.updateOne({ $pull: { following: userToUnfollow._id } });
 
         res.json({ message: 'Unfollowed successfully' });
     } catch (error) {
@@ -373,7 +382,6 @@ const getUserById = async (req, res) => {
         if (!user.privacy?.showPhone) delete profile.phone;
 
         res.json(profile);
-        res.json(user);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -394,12 +402,25 @@ const googleLogin = async (req, res) => {
         }
 
         const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-        const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience: process.env.GOOGLE_CLIENT_ID,
-        });
+        let payload;
 
-        const payload = ticket.getPayload();
+        // Determine if token is an ID token (JWT) or an access token
+        if (token.split('.').length === 3) {
+            // Likely an ID token
+            const ticket = await client.verifyIdToken({
+                idToken: token,
+                audience: process.env.GOOGLE_CLIENT_ID,
+            });
+            payload = ticket.getPayload();
+        } else {
+            // Likely an access token
+            const tokenInfo = await client.getTokenInfo(token);
+            // getTokenInfo doesn't return full profile (name, picture)
+            // We need to fetch user info manually using the access token
+            const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`);
+            payload = await response.json();
+        }
+
         const { email, name, picture } = payload;
 
         // Check if user exists
