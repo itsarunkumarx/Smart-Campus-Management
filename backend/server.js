@@ -95,6 +95,15 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'OK', message: 'Server is running' });
 });
 
+// Root route
+app.get('/', (req, res) => {
+    res.status(200).json({
+        status: 'OK',
+        message: 'Smart Campus Management API is running.',
+        timestamp: new Date().toISOString()
+    });
+});
+
 // Error handler middleware (must be last)
 app.use(errorHandler);
 

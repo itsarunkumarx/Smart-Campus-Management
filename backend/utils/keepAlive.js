@@ -15,6 +15,11 @@ const keepAlive = () => {
         return;
     }
 
+    if (!backendUrl) {
+        console.warn('⚠️ [Eternal Pulse] BACKEND_URL is not defined. Skipping keep-alive pulse.');
+        return;
+    }
+
     // Ping every 14 minutes (Render/Free tiers often sleep after 15 mins)
     const interval = 14 * 60 * 1000;
 
@@ -34,6 +39,8 @@ const keepAlive = () => {
                     if (isLocal || Math.random() < 0.1) {
                         console.log(`📡 [Pulse ${timestamp}] System Status: OPERATIONAL (200 OK)`);
                     }
+                } else if (res.statusCode === 404) {
+                    console.error(`❌ [Pulse ${timestamp}] Target Not Found (404). Please check if BACKEND_URL (${backendUrl}) is correct.`);
                 } else {
                     console.warn(`⚠️ [Pulse ${timestamp}] System Warning: Status Code ${res.statusCode} at ${backendUrl}/health`);
                 }
@@ -53,13 +60,13 @@ const keepAlive = () => {
             });
 
             // 2. Database Connection Guard
-            if (mongoose.connection.readyState === 1) {
+            if (mongoose.connection && mongoose.connection.readyState === 1) {
                 await mongoose.connection.db.admin().ping();
-            } else if (mongoose.connection.readyState === 0) {
+            } else if (mongoose.connection && mongoose.connection.readyState === 0) {
                 console.warn(`📡 [Pulse ${timestamp}] Database: DISCONNECTED (Attempting to reconnect...)`);
-            } else if (mongoose.connection.readyState === 2) {
+            } else if (mongoose.connection && mongoose.connection.readyState === 2) {
                 console.log(`📡 [Pulse ${timestamp}] Database: CONNECTING...`);
-            } else {
+            } else if (mongoose.connection) {
                 console.error(`🚨 [Pulse ${timestamp}] Critical: Database Connection Lost (State: ${mongoose.connection.readyState})`);
             }
 
@@ -73,8 +80,6 @@ const keepAlive = () => {
 
     // Scheduled pulses
     setInterval(performPing, interval);
-
-    console.log(`🚀 [Eternal Pulse] Initialized. Heartbeat Interval: 14m | Target: ${backendUrl}`);
 };
 
 module.exports = keepAlive;
