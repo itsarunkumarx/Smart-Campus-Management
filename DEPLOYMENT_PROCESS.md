@@ -70,21 +70,32 @@ Fill in the form:
 - **Environment:** `Node`
 - **Region:** Choose closest to your users
 - **Branch:** `main`
-- **Build Command:** `cd backend && npm install`
-- **Start Command:** `cd backend && npm start`
+- **Root Directory:** `backend` ⚠️ SET THIS FIRST!
+- **Build Command:** `npm install` ✅ (NOT `cd backend && npm install`)
+- **Start Command:** `npm start` ✅ (NOT `cd backend && npm start`)
 - **Plan:** `Free`
 
 ### Step 4: Add Environment Variables
-1. Scroll down to **Environment** section
-2. Click **Add Environment Variable** for each:
 
-| Key | Value |
-|-----|-------|
-| `MONGO_URI` | `mongodb+srv://campusadmin:PASSWORD@cluster.mongodb.net/smart-campus?retryWrites=true&w=majority` |
-| `JWT_SECRET` | Generate random: Open PowerShell and run `[System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes((New-Guid).ToString())) | Write-Host` |
-| `NODE_ENV` | `production` |
-| `PORT` | `5000` |
-| `FRONTEND_URL` | `https://smart-campus.vercel.app` (you'll add this later) |
+**⚠️ NOTE:** Render doesn't read `.env.example` files. You MUST enter each variable manually in Render's dashboard.
+
+1. Scroll down to **Environment** section
+2. Click **Add Environment Variable** for EACH line below:
+
+| Key | Value | From .env.example? |
+|-----|-------|-------------------|
+| `MONGO_URI` | `mongodb+srv://campusadmin:PASSWORD@cluster.mongodb.net/smart-campus?retryWrites=true&w=majority` | ✅ Use from backend/.env.example |
+| `JWT_SECRET` | Generate random: Open PowerShell and run `[System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes((New-Guid).ToString())) | Write-Host` | ❌ Generate new one |
+| `NODE_ENV` | `production` | ✅ Use from backend/.env.example |
+| `PORT` | `5000` | ✅ Use from backend/.env.example |
+| `FRONTEND_URL` | `https://smart-campus.vercel.app` | ⏳ Add this after Vercel deploys |
+| `GOOGLE_CLIENT_ID` | From your Google OAuth (if using) | ✅ Use from backend/.env.example |
+| `GOOGLE_CLIENT_SECRET` | From your Google OAuth (if using) | ✅ Use from backend/.env.example |
+
+**How to use .env.example as reference:**
+1. Open `backend/.env.example` in VS Code
+2. For each line in Render, copy the value from `.env.example`
+3. Replace placeholders (PASSWORD, URLs, etc.) with your actual values
 
 ### Step 5: Deploy
 1. Click **Create Web Service**

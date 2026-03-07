@@ -9,13 +9,17 @@ const mongoose = require('mongoose');
 const keepAlive = () => {
     const backendUrl = process.env.BACKEND_URL;
 
-    if (!backendUrl) {
-        console.log('⚠️  [Institutional Guard] BACKEND_URL not set. Eternal Pulse skipped.');
+    const isLocal = backendUrl.includes('localhost') || backendUrl.includes('127.0.0.1');
+
+    if (isLocal) {
         return;
     }
 
     // Ping every 14 minutes (Render/Free tiers often sleep after 15 mins)
     const interval = 14 * 60 * 1000;
+
+    console.log(`🚀 [Eternal Pulse] Initialized. Production Mode`);
+    console.log(`💓 Heartbeat Interval: 14m | Target: ${backendUrl}`);
 
     const performPing = async (retryCount = 0) => {
         const timestamp = new Date().toLocaleTimeString();
@@ -26,26 +30,37 @@ const keepAlive = () => {
 
             const req = protocol.get(`${backendUrl}/health`, (res) => {
                 if (res.statusCode === 200) {
-                    console.log(`📡 [Pulse ${timestamp}] System Status: OPERATIONAL (200 OK)`);
+                    // Only log success occasionally or in development to keep prod logs clean
+                    if (isLocal || Math.random() < 0.1) {
+                        console.log(`📡 [Pulse ${timestamp}] System Status: OPERATIONAL (200 OK)`);
+                    }
                 } else {
-                    console.warn(`⚠️ [Pulse ${timestamp}] System Warning: Status Code ${res.statusCode}`);
+                    console.warn(`⚠️ [Pulse ${timestamp}] System Warning: Status Code ${res.statusCode} at ${backendUrl}/health`);
                 }
             });
 
             req.on('error', (err) => {
-                console.error(`❌ [Pulse ${timestamp}] Transmission Failure: ${err.message}`);
-                if (retryCount < 3) {
-                    console.log(`🔄 [Pulse] Retrying transmission (${retryCount + 1}/3)...`);
-                    setTimeout(() => performPing(retryCount + 1), 5000);
+                // If local and connection refused, it might just be starting up or restarting
+                if (isLocal && (err.code === 'ECONNREFUSED' || err.code === 'ECONNRESET')) {
+                    console.log(`📡 [Pulse ${timestamp}] Local server not ready for ping, skipping...`);
+                } else {
+                    console.error(`❌ [Pulse ${timestamp}] Transmission Failure: ${err.message}`);
+                    if (retryCount < 2) {
+                        console.log(`🔄 [Pulse] Retrying transmission (${retryCount + 1}/2)...`);
+                        setTimeout(() => performPing(retryCount + 1), 10000);
+                    }
                 }
             });
 
             // 2. Database Connection Guard
             if (mongoose.connection.readyState === 1) {
                 await mongoose.connection.db.admin().ping();
-                // We don't log every DB ping to keep logs clean, just silent assurance
+            } else if (mongoose.connection.readyState === 0) {
+                console.warn(`📡 [Pulse ${timestamp}] Database: DISCONNECTED (Attempting to reconnect...)`);
+            } else if (mongoose.connection.readyState === 2) {
+                console.log(`📡 [Pulse ${timestamp}] Database: CONNECTING...`);
             } else {
-                console.error(`🚨 [Pulse ${timestamp}] Critical: Database Grid Terminated.`);
+                console.error(`🚨 [Pulse ${timestamp}] Critical: Database Connection Lost (State: ${mongoose.connection.readyState})`);
             }
 
         } catch (error) {

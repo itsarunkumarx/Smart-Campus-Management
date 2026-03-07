@@ -8,6 +8,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "kill-port": "npx -y kill-port 5000",
+    "predev": "npm run kill-port || exit 0",
     "dev": "nodemon server.js"
   },
   "keywords": [

@@ -34,12 +34,6 @@ const app = express();
 // Trust proxy for secure cookies on Render/Heroku
 app.set('trust proxy', 1);
 
-// Connect to MongoDB
-connectDB();
-
-// Start keep-alive mechanism
-keepAlive();
-
 // Rate limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -104,8 +98,23 @@ app.get('/health', (req, res) => {
 // Error handler middleware (must be last)
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+// Start server function
+const startServer = async () => {
+    try {
+        // Connect to MongoDB
+        await connectDB();
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-});
+        // Start keep-alive mechanism
+        keepAlive();
+
+        const PORT = process.env.PORT || 5000;
+        app.listen(PORT, () => {
+            console.log(`🚀 Server running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('❌ Failed to start server:', error.message);
+        process.exit(1);
+    }
+};
+
+startServer();
