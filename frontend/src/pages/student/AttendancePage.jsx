@@ -139,8 +139,8 @@ export const AttendancePage = () => {
                                     <BookOpen size={20} />
                                 </div>
                                 <span className={`text-sm font-bold px-2.5 py-1 rounded-lg ${parseFloat(subject.percentage) >= 75
-                                        ? 'bg-green-50 dark:bg-green-900/30 text-green-600'
-                                        : 'bg-red-50 dark:bg-red-900/30 text-red-600'
+                                    ? 'bg-green-50 dark:bg-green-900/30 text-green-600'
+                                    : 'bg-red-50 dark:bg-red-900/30 text-red-600'
                                     }`}>
                                     {subject.percentage}%
                                 </span>
@@ -203,7 +203,7 @@ export const AttendancePage = () => {
                                                 <XCircle className="text-red-500" size={16} />
                                             )}
                                             <span className={`text-xs font-bold capitalize ${record.status === 'present' ? 'text-green-600' :
-                                                    record.status === 'late' ? 'text-amber-600' : 'text-red-600'
+                                                record.status === 'late' ? 'text-amber-600' : 'text-red-600'
                                                 }`}>
                                                 {record.status}
                                             </span>

@@ -59,6 +59,17 @@ export const PostsPage = () => {
         }
     };
 
+    const handleDelete = async (postId) => {
+        if (!window.confirm('Are you sure you want to delete this post?')) return;
+        try {
+            await postService.deletePost(postId);
+            setPosts(prev => prev.filter(post => post._id !== postId));
+        } catch (err) {
+            console.error('Delete failed', err);
+            setError('Failed to delete post. Please try again.');
+        }
+    };
+
     return (
         <div className="max-w-4xl mx-auto space-y-12 p-4 md:p-6 pb-24">
             {/* Create Post Entry Point */}

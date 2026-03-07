@@ -1,12 +1,16 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { authService, api } from '../../services';
+import { resolveAssetUrl } from '../../utils/assetUtils';
 
 export const SettingsPage = () => {
     const { user, updateProfile, logout } = useAuth();
     const [activeTab, setActiveTab] = useState('account');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [showImageModal, setShowImageModal] = useState(false);
 
     const [accountForm, setAccountForm] = useState({
         name: user?.name || '',
@@ -14,6 +18,7 @@ export const SettingsPage = () => {
         email: user?.email || '',
         phone: user?.phone || '',
         profileImage: user?.profileImage || '',
+        coverImage: user?.coverImage || '',
         department: user?.department || '',
         year: user?.year || 1,
     });
@@ -55,7 +60,7 @@ export const SettingsPage = () => {
 
     const [uploading, setUploading] = useState(false);
 
-    const handleImageUpload = async (e) => {
+    const handleImageUpload = async (e, type = 'profileImage') => {
         const file = e.target.files[0];
         if (!file) return;
 
@@ -74,8 +79,8 @@ export const SettingsPage = () => {
             const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
             const baseUrl = apiUrl.replace(/\/api$/, '');
             const fullUrl = `${baseUrl}${response.data.url}`;
-            setAccountForm({ ...accountForm, profileImage: fullUrl });
-            setMessage({ type: 'success', text: 'Profile image archived. Sync Identity to finalize.' });
+            setAccountForm({ ...accountForm, [type]: fullUrl });
+            setMessage({ type: 'success', text: `${type === 'profileImage' ? 'Profile' : 'Cover'} image archived. Sync Identity to finalize.` });
         } catch (error) {
             console.error('Image upload failed:', error);
             const errorMessage = error.response?.data?.message || 'Asset archiving failed.';
@@ -232,9 +237,12 @@ export const SettingsPage = () => {
                             <div className="space-y-4">
                                 <div className="flex flex-col md:flex-row items-center gap-6 p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-800">
                                     <div className="relative group">
-                                        <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white dark:border-slate-700 shadow-xl">
+                                        <div
+                                            onClick={() => accountForm.profileImage && setShowImageModal(true)}
+                                            className={`w-24 h-24 rounded-full overflow-hidden border-4 border-white dark:border-slate-700 shadow-xl ${accountForm.profileImage ? 'cursor-pointer' : ''}`}
+                                        >
                                             {accountForm.profileImage ? (
-                                                <img src={accountForm.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                                <img src={resolveAssetUrl(accountForm.profileImage)} alt="Profile" className="w-full h-full object-cover" />
                                             ) : (
                                                 <div className="w-full h-full bg-indigo-100 dark:bg-slate-700 flex items-center justify-center text-2xl font-black text-indigo-600">
                                                     {accountForm.name.charAt(0)}
@@ -252,7 +260,7 @@ export const SettingsPage = () => {
                                         <div className="flex flex-wrap justify-center md:justify-start gap-3">
                                             <label className="btn btn-secondary py-2 px-4 text-[10px] cursor-pointer">
                                                 {uploading ? 'Archiving...' : 'Upload New Asset'}
-                                                <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'profileImage')} disabled={uploading} />
                                             </label>
                                             {accountForm.profileImage && (
                                                 <button
@@ -264,6 +272,39 @@ export const SettingsPage = () => {
                                                 </button>
                                             )}
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-800">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Institutional Banner</p>
+                                    <div className="relative h-32 rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700 border border-dashed border-slate-300 dark:border-slate-600">
+                                        {accountForm.coverImage ? (
+                                            <img src={resolveAssetUrl(accountForm.coverImage)} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-gray-400 uppercase tracking-tighter italic">
+                                                No banner asset detected
+                                            </div>
+                                        )}
+                                        {uploading && (
+                                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <label className="btn btn-secondary py-2 px-4 text-[10px] cursor-pointer">
+                                            {uploading ? 'Archiving...' : 'Upload Banner'}
+                                            <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'coverImage')} disabled={uploading} />
+                                        </label>
+                                        {accountForm.coverImage && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setAccountForm({ ...accountForm, coverImage: '' })}
+                                                className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors"
+                                            >
+                                                Purge Banner
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
 
@@ -576,6 +617,42 @@ export const SettingsPage = () => {
                     )}
                 </div>
             </div>
+
+            {/* Full Image Modal */}
+            <AnimatePresence>
+                {showImageModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowImageModal(false)}
+                        className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-10"
+                    >
+                        <motion.button
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="absolute top-10 right-10 p-4 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all"
+                            onClick={() => setShowImageModal(false)}
+                        >
+                            <X size={24} />
+                        </motion.button>
+
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="relative max-w-4xl w-full h-[80vh] flex items-center justify-center"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <img
+                                src={resolveAssetUrl(accountForm.coverImage || accountForm.profileImage)}
+                                alt="Full Profile"
+                                className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl border border-white/10"
+                            />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

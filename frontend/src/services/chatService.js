@@ -26,5 +26,10 @@ export const messageService = {
     sendMessage: async (messageData) => {
         const response = await api.post('/message', messageData);
         return response.data;
+    },
+
+    clearMessages: async (chatId) => {
+        const response = await api.delete(`/message/clear/${chatId}`);
+        return response.data;
     }
 };

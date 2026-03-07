@@ -147,9 +147,14 @@ const getMe = async (req, res) => {
             department: user.department,
             year: user.year,
             profileImage: user.profileImage,
+            coverImage: user.coverImage,
             bio: user.bio,
             skills: user.skills,
             socialLinks: user.socialLinks,
+            academicInfo: user.academicInfo,
+            facultyInfo: user.facultyInfo,
+            privacy: user.privacy,
+            phone: user.phone,
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -186,6 +191,7 @@ const updateProfile = async (req, res) => {
         user.skills = req.body.skills !== undefined ? req.body.skills : user.skills;
         user.certifications = req.body.certifications !== undefined ? req.body.certifications : user.certifications;
         user.profileImage = req.body.profileImage !== undefined ? req.body.profileImage : user.profileImage;
+        user.coverImage = req.body.coverImage !== undefined ? req.body.coverImage : user.coverImage;
         user.department = req.body.department !== undefined ? req.body.department : user.department;
         user.year = req.body.year !== undefined ? req.body.year : user.year;
 
@@ -243,6 +249,7 @@ const updateProfile = async (req, res) => {
             department: updatedUser.department,
             year: updatedUser.year,
             profileImage: updatedUser.profileImage,
+            coverImage: updatedUser.coverImage,
             bio: updatedUser.bio,
             phone: updatedUser.phone,
             skills: updatedUser.skills,

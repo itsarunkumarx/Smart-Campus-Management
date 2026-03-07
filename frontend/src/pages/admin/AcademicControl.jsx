@@ -48,6 +48,7 @@ export const AcademicControl = () => {
 
     // Review Modal State
     const [viewingScholarship, setViewingScholarship] = useState(null);
+    const [viewingPlacement, setViewingPlacement] = useState(null);
 
     const handleUpdateStatus = async (scholarshipId, applicantId, status) => {
         try {
@@ -410,7 +411,10 @@ export const AcademicControl = () => {
                             </div>
 
                             <button
-                                onClick={() => activeTab === 'scholarships' && setViewingScholarship(item)}
+                                onClick={() => {
+                                    if (activeTab === 'scholarships') setViewingScholarship(item);
+                                    else setViewingPlacement(item);
+                                }}
                                 className="w-full mt-6 py-3 bg-slate-50 dark:bg-slate-800 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:bg-amber-500 group-hover:text-white transition-all"
                             >
                                 View Full Manifest
@@ -501,6 +505,81 @@ export const AcademicControl = () => {
                                     <div className="text-center py-12 text-gray-400">
                                         <Users size={32} className="mx-auto mb-2 opacity-50" />
                                         <p className="text-xs font-black uppercase tracking-widest">No applicants pending review</p>
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+            {/* Placement Detail Modal */}
+            <AnimatePresence>
+                {viewingPlacement && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl p-8 shadow-2xl border border-slate-100 dark:border-slate-800"
+                        >
+                            {/* Header */}
+                            <div className="flex justify-between items-start mb-6">
+                                <div>
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-amber-500 mb-1">Career Placement</p>
+                                    <h3 className="text-2xl font-black uppercase tracking-tight text-gray-900 dark:text-white">{viewingPlacement.companyName}</h3>
+                                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">{viewingPlacement.jobRole}</p>
+                                </div>
+                                <button onClick={() => setViewingPlacement(null)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+                                    <XCircle size={24} className="text-gray-400 hover:text-rose-500 transition-colors" />
+                                </button>
+                            </div>
+
+                            {/* Info Grid */}
+                            <div className="grid grid-cols-2 gap-4 mb-6">
+                                {[
+                                    { label: 'Package (CTC)', value: viewingPlacement.package },
+                                    { label: 'Eligibility', value: viewingPlacement.eligibility },
+                                    { label: 'Deadline', value: new Date(viewingPlacement.deadline).toLocaleDateString() },
+                                    { label: 'Total Applied', value: `${viewingPlacement.applicants?.length || 0} students` },
+                                ].map(({ label, value }) => (
+                                    <div key={label} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">{label}</p>
+                                        <p className="text-sm font-black text-gray-900 dark:text-white">{value}</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Description */}
+                            {viewingPlacement.description && (
+                                <div className="mb-6 p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30">
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-amber-500 mb-2">Role Description</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{viewingPlacement.description}</p>
+                                </div>
+                            )}
+
+                            {/* Applicants */}
+                            <div>
+                                <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-3">Registered Applicants</p>
+                                {viewingPlacement.applicants && viewingPlacement.applicants.length > 0 ? (
+                                    <div className="space-y-3">
+                                        {viewingPlacement.applicants.map((applicant, i) => (
+                                            <div key={applicant._id || i} className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                                                <div>
+                                                    <p className="font-bold text-sm text-gray-900 dark:text-white">{applicant.userId?.name || 'Unknown Student'}</p>
+                                                    <p className="text-xs text-gray-400">{applicant.userId?.email}</p>
+                                                </div>
+                                                <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${applicant.status === 'selected' ? 'bg-emerald-100 text-emerald-600' :
+                                                        applicant.status === 'shortlisted' ? 'bg-blue-100 text-blue-600' :
+                                                            applicant.status === 'rejected' ? 'bg-rose-100 text-rose-600' :
+                                                                'bg-amber-100 text-amber-600'
+                                                    }`}>{applicant.status || 'applied'}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-10 text-gray-400">
+                                        <Users size={32} className="mx-auto mb-2 opacity-40" />
+                                        <p className="text-xs font-black uppercase tracking-widest">No applicants yet</p>
                                     </div>
                                 )}
                             </div>

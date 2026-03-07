@@ -53,7 +53,29 @@ const sendMessage = async (req, res) => {
     }
 };
 
+// @desc    Clear all messages in a chat permanently
+// @route   DELETE /api/message/clear/:chatId
+// @access  Private
+const clearMessages = async (req, res) => {
+    try {
+        const chat = await Chat.findById(req.params.chatId);
+        if (!chat) return res.status(404).json({ message: 'Chat not found' });
+
+        // Only chat participants can clear
+        const isMember = chat.users.some(u => u.toString() === req.user._id.toString());
+        if (!isMember) return res.status(403).json({ message: 'Not authorised' });
+
+        await Message.deleteMany({ chat: req.params.chatId });
+        await Chat.findByIdAndUpdate(req.params.chatId, { latestMessage: null });
+
+        res.json({ message: 'Chat cleared' });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 module.exports = {
     allMessages,
     sendMessage,
+    clearMessages,
 };

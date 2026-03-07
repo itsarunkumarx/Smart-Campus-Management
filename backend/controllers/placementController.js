@@ -8,6 +8,7 @@ const getPlacements = async (req, res) => {
     try {
         const placements = await Placement.find()
             .populate('createdBy', 'name')
+            .populate('applicants.userId', 'name email')
             .sort({ createdAt: -1 });
 
         res.json(placements);

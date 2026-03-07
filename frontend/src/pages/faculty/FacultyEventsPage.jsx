@@ -14,7 +14,8 @@ import {
     BookOpen,
     PartyPopper,
     Search,
-    Send
+    Send,
+    X
 } from 'lucide-react';
 import { eventService } from '../../services';
 import { useAuth } from '../../hooks/useAuth';
@@ -223,8 +224,8 @@ export const FacultyEventsPage = () => {
                             >
                                 <div className="flex justify-between items-start mb-4">
                                     <div className={`p-3 rounded-2xl ${event.category === 'academic' ? 'bg-indigo-50 text-indigo-500' :
-                                            event.category === 'cultural' ? 'bg-purple-50 text-purple-500' :
-                                                'bg-slate-50 text-slate-500'
+                                        event.category === 'cultural' ? 'bg-purple-50 text-purple-500' :
+                                            'bg-slate-50 text-slate-500'
                                         } dark:bg-slate-800`}>
                                         {event.category === 'academic' ? <BookOpen size={24} /> :
                                             event.category === 'cultural' ? <PartyPopper size={24} /> :

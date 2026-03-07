@@ -5,28 +5,45 @@ const Notification = require('../models/Notification');
 // @access  Private
 const getNotifications = async (req, res) => {
     try {
-        const notifications = await Notification.find({
-            $and: [
-                {
-                    $or: [
-                        { targetRole: 'all' },
-                        { targetRole: req.user.role },
-                        { recipient: req.user._id }
-                    ]
-                },
-                {
-                    $or: [
-                        { expiryDate: { $gte: new Date() } },
-                        { expiryDate: null }
-                    ]
-                }
-            ]
-        })
-            .populate('createdBy', 'name role')
-            .sort({ priority: -1, createdAt: -1 })
-            .limit(50);
+        const userId = req.user._id;
+        const userRole = req.user.role;
+        const now = new Date();
+        const notExpired = { $or: [{ expiryDate: { $gte: now } }, { expiryDate: null }] };
 
-        res.json(notifications);
+        // Personal notifications (directly addressed to this user)
+        const personal = await Notification.find({
+            recipient: userId,
+            ...notExpired
+        }).populate('createdBy', 'name role').sort({ priority: -1, createdAt: -1 }).limit(50);
+
+        // Broadcast notifications (by role, no specific recipient)
+        const broadcast = await Notification.find({
+            recipient: null,
+            targetRole: { $in: ['all', userRole] },
+            ...notExpired
+        }).populate('createdBy', 'name role').sort({ priority: -1, createdAt: -1 }).limit(50);
+
+        // Merge and deduplicate by _id — personal takes priority over broadcast
+        const seen = new Set();
+        const merged = [];
+        for (const n of [...personal, ...broadcast]) {
+            const id = n._id.toString();
+            if (!seen.has(id)) {
+                seen.add(id);
+                // Compute per-user isRead correctly:
+                //  - personal  → use isRead boolean
+                //  - broadcast → check readBy array
+                const isRead = n.recipient
+                    ? n.isRead
+                    : n.readBy.some(uid => uid.toString() === userId.toString());
+                merged.push({ ...n.toObject(), isRead });
+            }
+        }
+
+        // Re-sort merged result
+        merged.sort((a, b) => b.priority - a.priority || new Date(b.createdAt) - new Date(a.createdAt));
+
+        res.json(merged.slice(0, 50));
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

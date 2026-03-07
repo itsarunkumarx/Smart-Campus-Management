@@ -27,6 +27,7 @@ import {
 import { useAuth } from '../../hooks/useAuth';
 import { userService } from '../../services/userService';
 import { chatService } from '../../services/chatService';
+import { resolveAssetUrl } from '../../utils/assetUtils';
 
 export const ProfilePage = () => {
     const { id: profileId } = useParams();
@@ -36,6 +37,7 @@ export const ProfilePage = () => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isFollowing, setIsFollowing] = useState(false);
+    const [showImageModal, setShowImageModal] = useState(false);
 
     const isOwnProfile = !profileId || profileId === currentUser?._id;
 
@@ -100,9 +102,19 @@ export const ProfilePage = () => {
     return (
         <div className="max-w-6xl mx-auto space-y-8 pb-20">
             {/* Hero Header */}
-            <div className="relative h-64 rounded-[3rem] overflow-hidden group shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-slate-900 to-black"></div>
-                <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+            <div className="relative h-64 shadow-2xl group">
+                {/* Banner Container with overflow-hidden */}
+                <div className="absolute inset-0 rounded-[3rem] overflow-hidden">
+                    {profile.coverImage ? (
+                        <img src={resolveAssetUrl(profile.coverImage)} className="w-full h-full object-cover" />
+                    ) : (
+                        <>
+                            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-950 to-black"></div>
+                            <img src="https://images.unsplash.com/photo-1510511459317-13051f61168d?q=80&w=2070&auto=format&fit=crop" className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity" />
+                            <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                        </>
+                    )}
+                </div>
 
                 {/* Actions */}
                 <div className="absolute top-8 right-8 flex gap-3 z-10">
@@ -132,10 +144,14 @@ export const ProfilePage = () => {
                     )}
                 </div>
 
-                <div className="absolute -bottom-1 left-12 flex items-end gap-8 translate-y-1/2">
-                    <div className="w-44 h-44 rounded-[2.5rem] bg-white dark:bg-slate-900 p-2 shadow-2xl overflow-hidden group-hover:rotate-3 transition-transform duration-500">
+                {/* Avatar (Positioned relative to header but outside overflow-hidden) */}
+                <div className="absolute -bottom-1 left-12 translate-y-1/4 z-20">
+                    <div
+                        onClick={() => profile.profileImage && setShowImageModal(true)}
+                        className={`w-44 h-44 rounded-[2.5rem] bg-white dark:bg-slate-900 p-1.5 shadow-2xl overflow-hidden group-hover:rotate-3 transition-transform duration-500 ${profile.profileImage ? 'cursor-pointer' : ''}`}
+                    >
                         {profile.profileImage ? (
-                            <img src={profile.profileImage} className="w-full h-full object-cover rounded-[2rem]" />
+                            <img src={resolveAssetUrl(profile.profileImage)} className="w-full h-full object-cover rounded-[2rem]" />
                         ) : (
                             <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-4xl font-black text-indigo-600">
                                 {profile.name.charAt(0)}
@@ -294,6 +310,45 @@ export const ProfilePage = () => {
                     </div>
                 </div>
             </div>
+            {/* Full Image Modal */}
+            <AnimatePresence>
+                {showImageModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowImageModal(false)}
+                        className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-10"
+                    >
+                        <motion.button
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="absolute top-10 right-10 p-4 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all"
+                            onClick={() => setShowImageModal(false)}
+                        >
+                            <X size={24} />
+                        </motion.button>
+
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="relative max-w-4xl w-full h-[80vh] flex items-center justify-center"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <img
+                                src={resolveAssetUrl(profile.profileImage)}
+                                alt="Full Profile"
+                                className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl border border-white/10"
+                            />
+
+                            <div className="absolute -bottom-12 left-0 right-0 text-center">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 italic">Institutional Asset Preview · Full Scan Active</p>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

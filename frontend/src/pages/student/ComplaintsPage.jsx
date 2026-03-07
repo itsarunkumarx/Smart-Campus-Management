@@ -10,9 +10,12 @@ import {
     XCircle,
     ChevronDown,
     ChevronUp,
-    Send
+    Send,
+    FileText,
+    X,
+    ImageIcon
 } from 'lucide-react';
-import { complaintService } from '../../services';
+import { complaintService, api } from '../../services';
 
 export const ComplaintsPage = () => {
     const [complaints, setComplaints] = useState([]);
@@ -43,7 +46,7 @@ export const ComplaintsPage = () => {
         uploadData.append('media', file);
 
         try {
-            const response = await complaintService.api.post('/upload', uploadData, {
+            const response = await api.post('/upload', uploadData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             const fullUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${response.data.url}`;
