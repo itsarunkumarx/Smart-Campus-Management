@@ -151,11 +151,15 @@ export const SettingsPage = () => {
         }
         setLoading(true);
         try {
-            await updateProfile({ password: securityForm.newPassword });
+            await updateProfile({
+                password: securityForm.newPassword,
+                currentPassword: securityForm.currentPassword
+            });
             setMessage({ type: 'success', text: 'Security credentials updated!' });
             setSecurityForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
         } catch (err) {
-            setMessage({ type: 'error', text: 'Failed to change password.' });
+            const errorMessage = err.response?.data?.message || 'Failed to change password.';
+            setMessage({ type: 'error', text: errorMessage });
         } finally {
             setLoading(false);
         }
@@ -516,6 +520,17 @@ export const SettingsPage = () => {
                             </div>
 
                             <div className="space-y-6">
+                                <div>
+                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Current Access Key</label>
+                                    <input
+                                        type="password"
+                                        className="input"
+                                        value={securityForm.currentPassword}
+                                        onChange={(e) => setSecurityForm({ ...securityForm, currentPassword: e.target.value })}
+                                        required
+                                        placeholder="Enter current password"
+                                    />
+                                </div>
                                 <div>
                                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Institutional Access Key (New Password)</label>
                                     <input

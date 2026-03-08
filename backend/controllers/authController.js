@@ -72,13 +72,15 @@ const login = async (req, res) => {
         }).select('+password');
 
         if (!user) {
-            console.log(`❌ Login failed: User not found [${identifier}]`);
+            // Logged for security, but removed for production noise
+
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         // Check if role matches
         if (user.role !== role) {
-            console.log(`❌ Login failed: Role mismatch. User.role: ${user.role}, Requested: ${role}`);
+            // Role mismatch
+
             return res.status(403).json({ message: `Please login using ${user.role} portal` });
         }
 
@@ -91,7 +93,8 @@ const login = async (req, res) => {
         const isMatch = await user.matchPassword(password);
 
         if (!isMatch) {
-            console.log(`❌ Login failed: Password mismatch for ${identifier}`);
+            // Password mismatch
+
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
@@ -166,7 +169,7 @@ const getMe = async (req, res) => {
 // @access  Private
 const updateProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id);
+        const user = await User.findById(req.user._id).select('+password');
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -234,6 +237,14 @@ const updateProfile = async (req, res) => {
 
         // Update password if provided
         if (req.body.password) {
+            // Verify current password first
+            if (!req.body.currentPassword) {
+                return res.status(400).json({ message: 'Current password is required for security rotation.' });
+            }
+            const isMatch = await user.matchPassword(req.body.currentPassword);
+            if (!isMatch) {
+                return res.status(401).json({ message: 'Current password verification failed.' });
+            }
             user.password = req.body.password;
             user.mustChangePassword = false;
         }
