@@ -112,6 +112,7 @@ app.use(errorHandler);
 // Start server function
 const startServer = async () => {
     try {
+        console.log('📡 Starting Institutional Mainframe sequence...');
         // Connect to MongoDB
         await connectDB();
 
@@ -120,8 +121,7 @@ const startServer = async () => {
 
         const PORT = process.env.PORT || 5000;
         app.listen(PORT, () => {
-            // Institutional Mainframe: ONLINE
-
+            console.log(`🚀 Institutional Mainframe: ONLINE on port ${PORT}`);
         });
     } catch (error) {
         console.error('❌ Failed to start server:', error.message);
