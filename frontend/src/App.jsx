@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './hooks/useAuth';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -47,6 +47,7 @@ const ChangePasswordPage = lazy(() => import('./pages/auth/ChangePasswordPage').
 
 function AppRoutes() {
   const { user } = useAuth();
+  const location = useLocation();
 
   const getDashboardPath = (role) => {
     switch (role) {
@@ -61,8 +62,14 @@ function AppRoutes() {
     <div className="min-h-screen">
       <Navbar />
       <div className="flex">
-        {user && <Sidebar />}
-        <main className={`flex-1 ${user ? 'p-8' : ''}`}>
+        {(user || ['/student/dashboard', '/student/placements', '/student/scholarships', '/student/events', '/student/posts', '/student/attendance', '/student/notifications', '/ai-assistant', '/search'].some(path => location.pathname.startsWith(path)) || location.pathname.startsWith('/post/') || location.pathname.startsWith('/profile/') || location.pathname.startsWith('/faculty/dashboard') || location.pathname.startsWith('/admin/dashboard') || location.pathname.startsWith('/chat')) && <Sidebar />}
+
+
+
+        <main className={`flex-1 ${(user || ['/student/dashboard', '/student/placements', '/student/scholarships', '/student/events', '/student/posts', '/student/attendance', '/student/notifications', '/ai-assistant', '/search', '/profile/', '/faculty/dashboard', '/admin/dashboard', '/chat'].some(path => location.pathname.startsWith(path)) || location.pathname.startsWith('/post/')) ? 'p-8' : ''}`}>
+
+
+
           <Suspense fallback={
             <div className="flex items-center justify-center h-[80vh]">
               <div className="flex flex-col items-center gap-4">
@@ -82,12 +89,9 @@ function AppRoutes() {
               {/* Student Routes */}
               <Route
                 path="/student/dashboard"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <StudentDashboard />
-                  </ProtectedRoute>
-                }
+                element={<StudentDashboard />}
               />
+
               <Route
                 path="/student/profile"
                 element={
@@ -98,20 +102,13 @@ function AppRoutes() {
               />
               <Route
                 path="/student/posts"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <PostsPage />
-                  </ProtectedRoute>
-                }
+                element={<PostsPage />}
               />
               <Route
                 path="/student/attendance"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <AttendancePage />
-                  </ProtectedRoute>
-                }
+                element={<AttendancePage />}
               />
+
               <Route
                 path="/student/complaints"
                 element={
@@ -122,44 +119,26 @@ function AppRoutes() {
               />
               <Route
                 path="/student/placements"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <PlacementsPage />
-                  </ProtectedRoute>
-                }
+                element={<PlacementsPage />}
               />
               <Route
                 path="/student/scholarships"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <ScholarshipsPage />
-                  </ProtectedRoute>
-                }
+                element={<ScholarshipsPage />}
               />
               <Route
                 path="/student/events"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <EventsPage />
-                  </ProtectedRoute>
-                }
+                element={<EventsPage />}
               />
               <Route
                 path="/ai-assistant"
-                element={
-                  <ProtectedRoute allowedRoles={['student', 'faculty', 'admin']}>
-                    <AIAssistant />
-                  </ProtectedRoute>
-                }
+                element={<AIAssistant />}
               />
+
               <Route
                 path="/student/notifications"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <NotificationsPage />
-                  </ProtectedRoute>
-                }
+                element={<NotificationsPage />}
               />
+
               <Route
                 path="/student/*"
                 element={
@@ -173,14 +152,8 @@ function AppRoutes() {
               />
 
               {/* Faculty Routes */}
-              <Route
-                path="/faculty/dashboard"
-                element={
-                  <ProtectedRoute allowedRoles={['faculty']}>
-                    <FacultyDashboard />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
+
               <Route
                 path="/faculty/profile"
                 element={
@@ -234,14 +207,8 @@ function AppRoutes() {
               />
 
               {/* Admin Routes */}
-              <Route
-                path="/admin/dashboard"
-                element={
-                  <ProtectedRoute allowedRoles={['admin']}>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
               <Route
                 path="/admin/profile"
                 element={
@@ -329,20 +296,14 @@ function AppRoutes() {
               />
               <Route
                 path="/search"
-                element={
-                  <ProtectedRoute allowedRoles={['student', 'faculty', 'admin']}>
-                    <SearchPage />
-                  </ProtectedRoute>
-                }
+                element={<SearchPage />}
               />
+
               <Route
                 path="/chat"
-                element={
-                  <ProtectedRoute allowedRoles={['student', 'faculty', 'admin']}>
-                    <ChatPage />
-                  </ProtectedRoute>
-                }
+                element={<ChatPage />}
               />
+
               <Route
                 path="/student/create-post"
                 element={
@@ -353,12 +314,13 @@ function AppRoutes() {
               />
               <Route
                 path="/post/:id"
-                element={
-                  <ProtectedRoute allowedRoles={['student', 'faculty', 'admin']}>
-                    <DetailedPostPage />
-                  </ProtectedRoute>
-                }
+                element={<DetailedPostPage />}
               />
+              <Route
+                path="/profile/:id"
+                element={<ProfilePage />}
+              />
+
               <Route
                 path="/admin/ai-control"
                 element={

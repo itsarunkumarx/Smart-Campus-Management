@@ -68,7 +68,8 @@ app.use(compression()); // Compress responses
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(cookieParser()); // Parse cookies
-app.use(morgan('dev')); // Logging
+// app.use(morgan('dev')); // Silenced for production noise
+
 app.use('/api/', limiter); // Apply rate limiting to all API routes
 
 // Static folder for uploads
@@ -119,7 +120,8 @@ const startServer = async () => {
 
         const PORT = process.env.PORT || 5000;
         app.listen(PORT, () => {
-            console.log(`🚀 Server running on port ${PORT}`);
+            // Institutional Mainframe: ONLINE
+
         });
     } catch (error) {
         console.error('❌ Failed to start server:', error.message);

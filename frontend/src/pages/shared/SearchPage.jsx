@@ -41,6 +41,10 @@ export const SearchPage = () => {
     };
 
     const handleFollow = async (result) => {
+        if (!currentUser) {
+            navigate('/login/student');
+            return;
+        }
         try {
             if (result.isFollowing) {
                 await userService.unfollowUser(result._id);
@@ -57,6 +61,10 @@ export const SearchPage = () => {
     };
 
     const handleMessage = async (userId) => {
+        if (!currentUser) {
+            navigate('/login/student');
+            return;
+        }
         try {
             const chat = await chatService.accessChat(userId);
             navigate('/chat', { state: { selectedChat: chat } });

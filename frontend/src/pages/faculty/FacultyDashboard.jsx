@@ -30,6 +30,18 @@ export const FacultyDashboard = () => {
     }, []);
 
     const fetchDashboardData = async () => {
+        if (!user) {
+            setStats({
+                studentCount: 1240,
+                pendingComplaints: 4,
+                upcomingEvents: [
+                    { _id: 'f-mock1', title: 'Quarterly Board Summit', date: new Date(Date.now() + 86400000 * 3), location: 'Executive Suite', category: 'Strategic' },
+                    { _id: 'f-mock2', title: 'Dean\'s Academic Review', date: new Date(Date.now() + 86400000 * 7), location: 'Main Hall', category: 'Compliance' }
+                ]
+            });
+            setLoading(false);
+            return;
+        }
         try {
             setLoading(true);
             const data = await facultyService.getDashboard();
@@ -41,6 +53,7 @@ export const FacultyDashboard = () => {
         }
     };
 
+
     const quickActions = [
         { label: 'Mark Attendance', path: '/faculty/attendance', icon: <UserCheck size={20} />, color: 'bg-gold-metallic' },
         { label: 'Push Announcement', path: '/faculty/announcements', icon: <Bell size={20} />, color: 'bg-slate-900' },
@@ -51,7 +64,24 @@ export const FacultyDashboard = () => {
 
     return (
         <div className="max-w-7xl mx-auto space-y-10 p-4 md:p-8 pb-32">
-            <ProfileCompletionBanner />
+            {!user ? (
+                <div className="glass-card p-10 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-8 border-none shadow-2xl relative overflow-hidden">
+                    <div className="relative z-10 space-y-3">
+                        <div className="flex items-center gap-3">
+                            <ShieldAlert className="text-gold-metallic" size={24} />
+                            <h2 className="text-2xl font-black uppercase tracking-tighter italic">Access Restricted: Command Layer</h2>
+                        </div>
+                        <p className="text-indigo-100/60 text-xs font-bold uppercase tracking-[0.2em] max-w-xl leading-relaxed">
+                            You are currently viewing a high-fidelity preview of the Faculty Command Center. To view personalized metrics, manage students, or push institutional signals, please authenticate with your staff credentials.
+                        </p>
+                    </div>
+                    <Link to="/login/faculty" className="relative z-10 bg-gold-metallic text-slate-950 px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-gold-metallic/20">
+                        Institutional Login
+                    </Link>
+                    <div className="absolute top-0 right-0 w-1/2 h-full bg-indigo-500/5 blur-3xl rounded-full translate-x-1/2"></div>
+                </div>
+            ) : <ProfileCompletionBanner />}
+
             {/* Elegant Welcome Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative">
                 <div className="relative z-10">
@@ -64,8 +94,9 @@ export const FacultyDashboard = () => {
                         </h1>
                         <p className="text-gray-500 dark:text-gray-400 mt-3 font-bold flex items-center gap-2 text-xs md:text-sm">
                             <span className="w-8 h-[2px] bg-slate-900 dark:bg-gold-metallic"></span>
-                            PROF. {user?.name?.toUpperCase()} · {user?.department} FACULTY · SESSION ACTIVE
+                            {user ? `PROF. ${user?.name?.toUpperCase()} · ${user?.department} FACULTY · SESSION ACTIVE` : 'INSTITUTIONAL OVERVIEW · GUEST EXPLORER · PREVIEW MODE'}
                         </p>
+
                     </motion.div>
                 </div>
                 <Link to="/faculty/profile" className="group">

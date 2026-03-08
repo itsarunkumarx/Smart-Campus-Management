@@ -1,5 +1,16 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import {
+    Navigation,
+    MessageSquare,
+    TrendingUp,
+    Award,
+    Calendar,
+    Clock,
+    Bell,
+    Zap,
+    Users
+} from 'lucide-react';
 
 export const Sidebar = () => {
     const { user } = useAuth();
@@ -50,7 +61,24 @@ export const Sidebar = () => {
         { path: '/chat', label: 'Chat', icon: '💬' },
     ];
 
+    const guestLinks = [
+        { path: '/student/dashboard', label: 'Student Hub', icon: <Navigation size={18} /> },
+        { path: '/student/posts', label: 'Social Feed', icon: <MessageSquare size={18} /> },
+        { path: '/student/placements', label: 'Placements', icon: <TrendingUp size={18} /> },
+        { path: '/student/scholarships', label: 'Scholarships', icon: <Award size={18} /> },
+        { path: '/student/events', label: 'Campus Events', icon: <Calendar size={18} /> },
+        { path: '/student/attendance', label: 'Attendance', icon: <Clock size={18} /> },
+        { path: '/student/notifications', label: 'Alerts', icon: <Bell size={18} /> },
+        { path: '/ai-assistant', label: 'AI Helper', icon: <Zap size={18} /> },
+        { path: '/chat', label: 'Messages', icon: <MessageSquare size={18} /> },
+        { path: '/search', label: 'Search', icon: <Users size={18} /> },
+        { path: '/faculty/dashboard', label: 'Faculty Center', icon: <Navigation size={18} /> },
+        { path: '/admin/dashboard', label: 'Admin HQ', icon: <Navigation size={18} /> },
+    ];
+
+
     const getLinks = () => {
+        if (!user) return guestLinks;
         switch (user?.role) {
             case 'student':
                 return studentLinks;

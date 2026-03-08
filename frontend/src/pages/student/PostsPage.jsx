@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { postService } from '../../services';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+
 import {
     Heart,
     MessageCircle,
@@ -17,6 +18,7 @@ import {
     Sparkles,
     ChevronRight,
     Tag as TagIcon
+
 } from 'lucide-react';
 import { resolveAssetUrl } from '../../utils/assetUtils';
 
@@ -51,6 +53,10 @@ export const PostsPage = () => {
     };
 
     const handleLike = async (postId) => {
+        if (!user) {
+            navigate('/login/student');
+            return;
+        }
         try {
             const updatedPost = await postService.toggleLike(postId);
             setPosts(posts.map(post => post._id === postId ? { ...post, likes: updatedPost.likes } : post));
@@ -60,6 +66,10 @@ export const PostsPage = () => {
     };
 
     const handleDelete = async (postId) => {
+        if (!user) {
+            navigate('/login/student');
+            return;
+        }
         if (!window.confirm('Are you sure you want to delete this post?')) return;
         try {
             await postService.deletePost(postId);
@@ -70,13 +80,34 @@ export const PostsPage = () => {
         }
     };
 
+    const handleReport = async (postId) => {
+        if (!user) {
+            navigate('/login/student');
+            return;
+        }
+        if (!window.confirm('Report this manifest for institutional review?')) return;
+        try {
+            await postService.reportPost(postId);
+            setError('Post reported and queued for moderation review.');
+            setTimeout(() => setError(null), 3000);
+        } catch (err) {
+            console.error('Report failed');
+        }
+    };
+
     return (
         <div className="max-w-4xl mx-auto space-y-12 p-4 md:p-6 pb-24">
             {/* Create Post Entry Point */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                onClick={() => navigate('/student/create-post')}
+                onClick={() => {
+                    if (!user) {
+                        navigate('/login/student');
+                    } else {
+                        navigate('/student/create-post');
+                    }
+                }}
                 className="group relative h-32 rounded-[2rem] bg-gradient-to-r from-indigo-900 to-indigo-600 p-[2px] cursor-pointer shadow-2xl hover:scale-[1.02] transition-all overflow-hidden"
             >
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
@@ -159,8 +190,9 @@ export const PostsPage = () => {
 
 const PostCard = ({ post, currentUser, onLike, onDelete, onReport }) => {
     const navigate = useNavigate();
-    const isLiked = post.likes.includes(currentUser?._id);
-    const isOwner = post.userId?._id === currentUser?._id;
+    const isLiked = currentUser ? post.likes.includes(currentUser?._id) : false;
+    const isOwner = currentUser && post.userId?._id === currentUser?._id;
+
 
     return (
         <motion.div

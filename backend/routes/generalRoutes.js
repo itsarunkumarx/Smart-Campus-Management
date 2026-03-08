@@ -4,8 +4,9 @@ const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// All routes require authentication
-router.use(protect);
+// All routes that require authentication should use 'protect' individually if needed
+// current routes are read-only and public
+
 
 router.get('/placements', getPlacements);
 router.get('/scholarships', getScholarships);

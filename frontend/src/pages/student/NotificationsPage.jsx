@@ -22,6 +22,8 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { notificationService } from '../../services';
+import { Link } from 'react-router-dom';
+
 
 export const NotificationsPage = () => {
     const { user } = useAuth();
@@ -34,6 +36,36 @@ export const NotificationsPage = () => {
     }, []);
 
     const fetchNotifications = async () => {
+        if (!user) {
+            setNotifications([
+                {
+                    _id: 'mock1',
+                    title: 'Academic Calendar 2026-27',
+                    message: 'The official institutional roadmap for the upcoming session is now active. Review major milestones and examination windows.',
+                    type: 'success',
+                    createdAt: new Date(),
+                    readBy: []
+                },
+                {
+                    _id: 'mock2',
+                    title: 'Urgent: Career Fair Registration',
+                    message: 'Global enterprises will be on-campus next week. Ensure your digital portfolio is synchronized with the placement cell.',
+                    type: 'urgent',
+                    createdAt: new Date(Date.now() - 3600000),
+                    readBy: []
+                },
+                {
+                    _id: 'mock3',
+                    title: 'System Maintenance: Neural Gateway',
+                    message: 'The AI Assistant will undergo a brief synchronization cycle tonight at 02:00 IST. Operational status will be restored by dawn.',
+                    type: 'warning',
+                    createdAt: new Date(Date.now() - 86400000),
+                    readBy: []
+                }
+            ]);
+            setLoading(false);
+            return;
+        }
         try {
             setLoading(true);
             const data = await notificationService.getNotifications();
@@ -44,6 +76,7 @@ export const NotificationsPage = () => {
             setLoading(false);
         }
     };
+
 
     const handleMarkAsRead = async (id) => {
         try {
@@ -96,13 +129,20 @@ export const NotificationsPage = () => {
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-2">Active Signal Monitoring · Institutional Stream</p>
                 </div>
 
-                <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-3 rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-800">
-                    <div className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 ${unreadCount > 0 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-slate-100 dark:bg-slate-800 text-gray-400'}`}>
-                        <Bell size={18} className={unreadCount > 0 ? 'animate-bounce' : ''} />
-                        {unreadCount} Unread Signals
+                {!user ? (
+                    <Link to="/login/student" className="bg-indigo-600 text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/30">
+                        Sign In for Personalized Alerts
+                    </Link>
+                ) : (
+                    <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-3 rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-800">
+                        <div className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 ${unreadCount > 0 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-slate-100 dark:bg-slate-800 text-gray-400'}`}>
+                            <Bell size={18} className={unreadCount > 0 ? 'animate-bounce' : ''} />
+                            {unreadCount} Unread Signals
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
+
 
             <div className="space-y-6">
                 {loading ? (

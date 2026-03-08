@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../../hooks/useAuth';
+import { Link } from 'react-router-dom';
 import {
     Calendar,
     BookOpen,
@@ -15,12 +17,35 @@ export const AttendancePage = () => {
     const [attendanceData, setAttendanceData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { user } = useAuth();
 
     useEffect(() => {
         fetchAttendance();
-    }, []);
+    }, [user]);
 
     const fetchAttendance = async () => {
+        if (!user) {
+            setAttendanceData([
+                {
+                    subject: 'Advanced React Systems', percentage: '92.5', present: 24, total: 26, records: [
+                        { subject: 'Advanced React Systems', date: new Date(), status: 'present', markedBy: { name: 'Prof. Sarah Chen' } },
+                        { subject: 'Advanced React Systems', date: new Date(Date.now() - 86400000), status: 'present', markedBy: { name: 'Prof. Sarah Chen' } }
+                    ]
+                },
+                {
+                    subject: 'Neural Network Architecture', percentage: '88.0', present: 22, total: 25, records: [
+                        { subject: 'Neural Network Architecture', date: new Date(), status: 'late', markedBy: { name: 'Dr. Marcus Vane' } }
+                    ]
+                },
+                {
+                    subject: 'Distributed Cloud Computing', percentage: '78.2', present: 18, total: 23, records: [
+                        { subject: 'Distributed Cloud Computing', date: new Date(), status: 'absent', markedBy: { name: 'Prof. Elena Ros' } }
+                    ]
+                }
+            ]);
+            setLoading(false);
+            return;
+        }
         try {
             setLoading(true);
             const data = await studentService.getAttendance();
@@ -50,6 +75,23 @@ export const AttendancePage = () => {
 
     return (
         <div className="max-w-6xl mx-auto space-y-8 p-4 md:p-6 pb-20">
+            {!user && (
+                <div className="glass-card p-6 bg-amber-600 text-white flex flex-col md:flex-row items-center justify-between gap-4 border-none shadow-xl shadow-amber-600/20">
+                    <div className="flex items-center gap-4">
+                        <div className="bg-white/20 p-3 rounded-2xl">
+                            <Clock size={24} />
+                        </div>
+                        <div>
+                            <h3 className="font-black uppercase tracking-tighter italic">Preview Mode: Attendance Tracking</h3>
+                            <p className="text-amber-100/70 text-[10px] font-bold uppercase tracking-widest">Login to see your personal academic consistency.</p>
+                        </div>
+                    </div>
+                    <Link to="/login/student" className="bg-white text-amber-600 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shadow-lg">
+                        Sign In Now
+                    </Link>
+                </div>
+            )}
+
             {/* Header Area */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -170,7 +212,9 @@ export const AttendancePage = () => {
             <div className="glass-card rounded-2xl overflow-hidden mt-8">
                 <div className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white">Attendance Journal</h2>
-                    <TrendingUp className="text-gray-400" size={20} />
+                    <div className="flex items-center gap-2">
+                        <TrendingUp className="text-gray-400" size={20} />
+                    </div>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">

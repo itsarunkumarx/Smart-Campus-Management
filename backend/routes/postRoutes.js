@@ -12,15 +12,15 @@ const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// All routes require authentication
-router.use(protect);
+// Authentication middleware is applied to specific routes
 
-router.post('/', createPost);
+
+router.post('/', protect, createPost);
 router.get('/', getPosts);
 router.get('/:id', getPostById);
-router.put('/:id/like', toggleLike);
-router.post('/:id/comment', addComment);
-router.put('/:id/report', reportPost);
-router.delete('/:id', deletePost);
+router.put('/:id/like', protect, toggleLike);
+router.post('/:id/comment', protect, addComment);
+router.put('/:id/report', protect, reportPost);
+router.delete('/:id', protect, deletePost);
 
 module.exports = router;

@@ -53,7 +53,7 @@ export const ProfilePage = () => {
             } else {
                 const data = await userService.getUserById(profileId);
                 setProfile(data);
-                setIsFollowing(data.followers?.some(f => (f._id || f) === currentUser._id));
+                setIsFollowing(currentUser ? data.followers?.some(f => (f._id || f) === currentUser._id) : false);
             }
         } catch (error) {
             console.error('Failed to fetch profile:', error);
@@ -63,6 +63,10 @@ export const ProfilePage = () => {
     };
 
     const handleFollow = async () => {
+        if (!currentUser) {
+            navigate('/login/student');
+            return;
+        }
         try {
             if (isFollowing) {
                 await userService.unfollowUser(profile._id);
@@ -77,6 +81,10 @@ export const ProfilePage = () => {
     };
 
     const handleMessage = async () => {
+        if (!currentUser) {
+            navigate('/login/student');
+            return;
+        }
         try {
             const chat = await chatService.accessChat(profile._id);
             navigate('/chat', { state: { selectedChat: chat } });

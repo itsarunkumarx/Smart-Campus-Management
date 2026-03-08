@@ -32,6 +32,16 @@ export const AdminDashboard = () => {
     }, []);
 
     const fetchDashboardData = async () => {
+        if (!user) {
+            setStats({
+                totalUsers: 5420,
+                totalStudents: 5100,
+                totalFaculty: 320,
+                pendingComplaints: 42
+            });
+            setLoading(false);
+            return;
+        }
         try {
             setLoading(true);
             const data = await adminService.getDashboard();
@@ -43,6 +53,7 @@ export const AdminDashboard = () => {
         }
     };
 
+
     const adminActions = [
         { label: 'User Directory', path: '/admin/users', icon: <Users size={20} />, color: 'bg-gold-metallic', desc: 'Manage all campus roles' },
         { label: 'Grievance Hub', path: '/admin/complaints', icon: <ShieldAlert size={20} />, color: 'bg-slate-900', desc: 'Resolve system disputes' },
@@ -53,7 +64,24 @@ export const AdminDashboard = () => {
 
     return (
         <div className="max-w-7xl mx-auto space-y-10 p-4 md:p-8 pb-32">
-            <ProfileCompletionBanner />
+            {!user ? (
+                <div className="glass-card p-10 bg-gradient-to-r from-red-950 via-slate-900 to-red-950 text-white flex flex-col md:flex-row items-center justify-between gap-8 border-none shadow-2xl relative overflow-hidden">
+                    <div className="relative z-10 space-y-3">
+                        <div className="flex items-center gap-3">
+                            <ShieldAlert className="text-rose-500" size={24} />
+                            <h2 className="text-2xl font-black uppercase tracking-tighter italic text-rose-500">Security Access Locked: Root Layer</h2>
+                        </div>
+                        <p className="text-rose-100/60 text-xs font-bold uppercase tracking-[0.2em] max-w-xl leading-relaxed">
+                            You are currently viewing a telemetry-only preview of the Institutional Mainframe. To access administrative controls, moderate content, or adjust AI parameters, please authenticate with root-level credentials.
+                        </p>
+                    </div>
+                    <Link to="/login/admin" className="relative z-10 bg-rose-600 text-white px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-700 transition-all shadow-xl shadow-rose-600/30">
+                        Administrator Login
+                    </Link>
+                    <div className="absolute top-0 left-1/2 w-full h-full bg-rose-500/5 blur-3xl rounded-full -translate-x-1/2"></div>
+                </div>
+            ) : <ProfileCompletionBanner />}
+
             {/* Command Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative">
                 <div className="relative z-10">
@@ -66,8 +94,9 @@ export const AdminDashboard = () => {
                         </h1>
                         <p className="text-gray-500 dark:text-gray-400 mt-3 font-bold flex items-center gap-2 text-xs md:text-sm">
                             <span className="w-8 h-[2px] bg-slate-900 dark:bg-white"></span>
-                            CHIEF ADMINISTRATOR · {user?.name?.toUpperCase()} · SYSTEM OVERWATCH LIVE
+                            {user ? `CHIEF ADMINISTRATOR · ${user?.name?.toUpperCase()} · SYSTEM OVERWATCH LIVE` : 'SYSTEM OVERWATCH · GUEST EXPLORER · PREVIEW MODE'}
                         </p>
+
                     </motion.div>
                 </div>
 
@@ -271,6 +300,14 @@ const AISummaryCard = () => {
 
     useEffect(() => {
         const fetchSummary = async () => {
+            if (!user) {
+                setSummary({
+                    summary: "Institutional efficiency is trending upwards across all sectors. Student engagement with the social layer has increased by 14% this cycle.",
+                    insight: "Synchronize placement telemetry with the student social feed for maximum career impact."
+                });
+                setLoading(false);
+                return;
+            }
             try {
                 const data = await adminService.getAISummary();
                 setSummary(data);
@@ -280,6 +317,7 @@ const AISummaryCard = () => {
                 setLoading(false);
             }
         };
+
         fetchSummary();
     }, []);
 

@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import { eventService } from '../../services';
 import { useAuth } from '../../hooks/useAuth';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 // Days until event date
 const daysUntil = (date) => {
@@ -50,7 +52,8 @@ const STATUS_CONFIG = {
 const EventDetailsModal = ({ event, currentUser, onClose, onRegister, isRegistering }) => {
     if (!event) return null;
 
-    const isRegistered = event.registeredUsers?.some(id => id === currentUser?._id || id?._id === currentUser?._id);
+    const isRegistered = currentUser ? event.registeredUsers?.some(id => id === currentUser?._id || id?._id === currentUser?._id) : false;
+
     const isFull = event.registeredUsers?.length >= event.capacity;
     const isPast = event.status === 'completed' || event.status === 'cancelled';
     const daysLeft = daysUntil(event.date);
@@ -151,40 +154,51 @@ const EventDetailsModal = ({ event, currentUser, onClose, onRegister, isRegister
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 border-t border-slate-100 dark:border-slate-800">
-                    {isRegistered ? (
-                        <button disabled className="w-full py-4 rounded-2xl border-2 border-emerald-200 text-emerald-600 font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2">
-                            <UserCheck size={18} /> Registered
-                        </button>
-                    ) : isPast || event.status === 'cancelled' ? (
-                        <button disabled className="w-full py-4 rounded-2xl bg-gray-100 dark:bg-slate-800 text-gray-400 font-black text-sm uppercase tracking-widest">
-                            {event.status === 'cancelled' ? 'Event Cancelled' : 'Event Ended'}
-                        </button>
-                    ) : isFull ? (
-                        <button disabled className="w-full py-4 rounded-2xl bg-gray-100 dark:bg-slate-800 text-gray-400 font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2">
-                            <Ban size={18} /> Sold Out
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => onRegister(event._id)}
-                            disabled={isRegistering === event._id}
-                            className={`w-full py-4 rounded-2xl text-white font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 ${cat.bg}`}
-                        >
-                            {isRegistering === event._id ? (
-                                <div className="animate-spin w-5 h-5 border-2 border-white/20 border-t-white rounded-full" />
-                            ) : (
-                                <> Register Now <ArrowRight size={18} /></>
-                            )}
-                        </button>
-                    )}
-                </div>
+                {!currentUser ? (
+                    <Link
+                        to="/login/student"
+                        className={`w-full py-4 rounded-2xl text-white font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 ${cat.bg}`}
+                    >
+                        Sign In to Register <ArrowRight size={18} />
+                    </Link>
+                ) : (
+                    <>
+                        {isRegistered ? (
+                            <button disabled className="w-full py-4 rounded-2xl border-2 border-emerald-200 text-emerald-600 font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2">
+                                <UserCheck size={18} /> Registered
+                            </button>
+                        ) : isPast || event.status === 'cancelled' ? (
+                            <button disabled className="w-full py-4 rounded-2xl bg-gray-100 dark:bg-slate-800 text-gray-400 font-black text-sm uppercase tracking-widest">
+                                {event.status === 'cancelled' ? 'Event Cancelled' : 'Event Ended'}
+                            </button>
+                        ) : isFull ? (
+                            <button disabled className="w-full py-4 rounded-2xl bg-gray-100 dark:bg-slate-800 text-gray-400 font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2">
+                                <Ban size={18} /> Sold Out
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => onRegister(event._id)}
+                                disabled={isRegistering === event._id}
+                                className={`w-full py-4 rounded-2xl text-white font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 ${cat.bg}`}
+                            >
+                                {isRegistering === event._id ? (
+                                    <div className="animate-spin w-5 h-5 border-2 border-white/20 border-t-white rounded-full" />
+                                ) : (
+                                    <> Register Now <ArrowRight size={18} /></>
+                                )}
+                            </button>
+                        )}
+                    </>
+                )}
             </motion.div>
         </div>
     );
 };
 
 export const EventsPage = () => {
+    const navigate = useNavigate();
     const { user } = useAuth();
+
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
@@ -209,6 +223,11 @@ export const EventsPage = () => {
     };
 
     const handleRegister = async (id) => {
+        if (!user) {
+            navigate('/login/student');
+            return;
+        }
+
         try {
             setIsRegistering(id);
             await eventService.registerForEvent(id);
@@ -257,8 +276,8 @@ export const EventsPage = () => {
                             key={cat.id}
                             onClick={() => setFilter(cat.id)}
                             className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all ${filter === cat.id
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                                    : 'text-gray-400 hover:text-indigo-500'
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
+                                : 'text-gray-400 hover:text-indigo-500'
                                 }`}
                         >
                             {cat.icon}
@@ -314,8 +333,8 @@ export const EventsPage = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         className={`p-4 rounded-2xl flex items-center shadow-lg border ${message.type === 'success'
-                                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                                : 'bg-rose-50 border-rose-200 text-rose-700'
+                            ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                            : 'bg-rose-50 border-rose-200 text-rose-700'
                             }`}
                     >
                         <CheckCircle2 size={20} className="mr-3 shrink-0" />
@@ -411,32 +430,43 @@ export const EventsPage = () => {
                                         {/* View Details */}
                                         <button
                                             onClick={() => setSelectedEvent(event)}
-                                            className="flex-1 py-2.5 rounded-xl border-2 border-indigo-100 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all"
+                                            className="flex-1 py-2.5 rounded-xl border-2 border-indigo-100 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all font-inter"
                                         >
                                             <Eye size={13} /> Details
                                         </button>
 
                                         {/* Register / Status */}
-                                        {isRegistered ? null : isPast || event.status === 'cancelled' ? (
-                                            <button disabled className="flex-1 py-2.5 rounded-xl bg-gray-100 dark:bg-slate-800 text-gray-400 font-black text-[10px] uppercase tracking-widest">
-                                                {event.status === 'cancelled' ? 'Cancelled' : 'Ended'}
-                                            </button>
-                                        ) : isFull ? (
-                                            <button disabled className="flex-1 py-2.5 rounded-xl bg-gray-100 dark:bg-slate-800 text-gray-400 font-black text-[10px] uppercase tracking-widest">
-                                                Sold Out
-                                            </button>
-                                        ) : (
-                                            <button
-                                                onClick={() => handleRegister(event._id)}
-                                                disabled={isRegistering === event._id}
-                                                className={`flex-1 py-2.5 rounded-xl text-white font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all ${cat.bg}`}
+                                        {!user ? (
+                                            <Link
+                                                to="/login/student"
+                                                className={`flex-1 py-2.5 rounded-xl text-white font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95 ${cat.bg}`}
                                             >
-                                                {isRegistering === event._id ? (
-                                                    <div className="animate-spin w-4 h-4 border-2 border-white/20 border-t-white rounded-full" />
+                                                Register <ArrowRight size={13} />
+                                            </Link>
+                                        ) : (
+                                            <>
+                                                {isRegistered ? null : isPast || event.status === 'cancelled' ? (
+                                                    <button disabled className="flex-1 py-2.5 rounded-xl bg-gray-100 dark:bg-slate-800 text-gray-400 font-black text-[10px] uppercase tracking-widest">
+                                                        {event.status === 'cancelled' ? 'Cancelled' : 'Ended'}
+                                                    </button>
+                                                ) : isFull ? (
+                                                    <button disabled className="flex-1 py-2.5 rounded-xl bg-gray-100 dark:bg-slate-800 text-gray-400 font-black text-[10px] uppercase tracking-widest">
+                                                        Sold Out
+                                                    </button>
                                                 ) : (
-                                                    <> Register <ArrowRight size={13} /></>
+                                                    <button
+                                                        onClick={() => handleRegister(event._id)}
+                                                        disabled={isRegistering === event._id}
+                                                        className={`flex-1 py-2.5 rounded-xl text-white font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all ${cat.bg}`}
+                                                    >
+                                                        {isRegistering === event._id ? (
+                                                            <div className="animate-spin w-4 h-4 border-2 border-white/20 border-t-white rounded-full" />
+                                                        ) : (
+                                                            <> Register <ArrowRight size={13} /></>
+                                                        )}
+                                                    </button>
                                                 )}
-                                            </button>
+                                            </>
                                         )}
                                     </div>
                                 </div>

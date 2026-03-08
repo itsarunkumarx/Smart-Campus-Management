@@ -46,6 +46,10 @@ export const DetailedPostPage = () => {
     };
 
     const handleLike = async () => {
+        if (!user) {
+            navigate('/login/student');
+            return;
+        }
         try {
             const updated = await postService.toggleLike(id);
             setPost({ ...post, likes: updated.likes });
@@ -56,6 +60,10 @@ export const DetailedPostPage = () => {
 
     const handleAddComment = async (e) => {
         e.preventDefault();
+        if (!user) {
+            navigate('/login/student');
+            return;
+        }
         if (!comment.trim()) return;
 
         setIsSubmitting(true);
@@ -177,16 +185,16 @@ export const DetailedPostPage = () => {
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: idx * 0.05 }}
-                                    key={c._id}
+                                    key={c._id || idx}
                                     className="flex gap-4"
                                 >
                                     <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center text-[10px] font-black uppercase">
-                                        {c.userId?.name?.charAt(0)}
+                                        {c.userId?.name?.charAt(0) || '?'}
                                     </div>
                                     <div className="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-100 dark:border-white/5">
                                         <div className="flex justify-between items-center mb-1">
-                                            <span className="text-[9px] font-black uppercase text-indigo-600">{c.userId?.name}</span>
-                                            <span className="text-[8px] font-bold text-gray-400 uppercase italic">{new Date(c.createdAt).toLocaleDateString()}</span>
+                                            <span className="text-[9px] font-black uppercase text-indigo-600">{c.userId?.name || 'Anonymous'}</span>
+                                            <span className="text-[8px] font-bold text-gray-400 uppercase italic">{c.createdAt ? new Date(c.createdAt).toLocaleDateString() : 'Just now'}</span>
                                         </div>
                                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{c.text}</p>
                                     </div>

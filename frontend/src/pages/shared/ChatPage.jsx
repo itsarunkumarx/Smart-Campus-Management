@@ -21,7 +21,8 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
+
 
 /* ─── Helpers ─────────────────────────────────────── */
 const fileIcon = (type) => {
@@ -76,15 +77,22 @@ export const ChatPage = () => {
     const messagesEndRef = useRef(null);
 
     /* ── effects ── */
-    useEffect(() => { fetchChats(); }, []);
+    useEffect(() => {
+        if (user) {
+            fetchChats();
+        } else {
+            setLoading(false);
+        }
+    }, [user]);
 
     useEffect(() => {
-        if (selectedChat) {
+        if (selectedChat && user) {
             fetchMessages();
             const interval = setInterval(fetchMessages, 10000); // Poll every 10 seconds
             return () => clearInterval(interval);
         }
-    }, [selectedChat]);
+    }, [selectedChat, user]);
+
 
     useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
@@ -244,9 +252,48 @@ export const ChatPage = () => {
         return other?.profileImage;
     };
 
+    if (!user) {
+        return (
+            <div className="h-[calc(100vh-120px)] flex flex-col items-center justify-center bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-800 p-10 text-center relative">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 animate-pulse"></div>
+                <div className="w-24 h-24 bg-indigo-50 dark:bg-indigo-900/10 rounded-full flex items-center justify-center text-indigo-600 mb-8 border border-indigo-100 dark:border-indigo-500/20">
+                    <MessageCircle size={48} />
+                </div>
+                <h1 className="text-4xl font-black uppercase tracking-tighter italic mb-4">Secure Messaging <span className="text-indigo-600">Protocol</span></h1>
+                <p className="max-w-md text-gray-500 dark:text-gray-400 font-medium text-sm leading-relaxed mb-8">
+                    Our end-to-end encrypted communication cluster allows students, faculty, and admins to collaborate in real-time. Experience seamless file sharing, group dynamics, and instant notifications.
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-4">
+                    <Link to="/login/student" className="bg-indigo-600 text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/30">
+                        Begin Session
+                    </Link>
+                    <Link to="/student/posts" className="bg-slate-50 dark:bg-slate-800 text-gray-900 dark:text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700">
+                        Explore Social
+                    </Link>
+                </div>
+
+                <div className="mt-16 grid grid-cols-3 gap-8 w-full max-w-2xl opacity-50">
+                    <div className="space-y-2">
+                        <Lock size={20} className="mx-auto text-emerald-500" />
+                        <p className="text-[10px] font-black uppercase tracking-widest">E2E Encrypted</p>
+                    </div>
+                    <div className="space-y-2">
+                        <Users size={20} className="mx-auto text-indigo-500" />
+                        <p className="text-[10px] font-black uppercase tracking-widest">Group Sync</p>
+                    </div>
+                    <div className="space-y-2">
+                        <Paperclip size={20} className="mx-auto text-amber-500" />
+                        <p className="text-[10px] font-black uppercase tracking-widest">Deep Sharing</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     /* ══════════════════════ RENDER ══════════════════════ */
     return (
         <div className="h-[calc(100vh-120px)] flex bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-800">
+
 
             {/* ── Sidebar ── */}
             <div className={`w-full md:w-80 border-r border-slate-100 dark:border-slate-800 flex flex-col ${selectedChat ? 'hidden md:flex' : 'flex'}`}>

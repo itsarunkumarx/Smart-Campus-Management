@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 import { studentService } from '../../services';
 import { ProfileCompletionBanner } from '../../components/ProfileCompletionBanner';
 
 export const StudentDashboard = () => {
+    const { user } = useAuth();
     const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -12,6 +14,18 @@ export const StudentDashboard = () => {
     }, []);
 
     const fetchDashboard = async () => {
+        if (!user) {
+            setDashboardData({
+                attendancePercentage: 84,
+                unreadCount: 12,
+                upcomingEvents: [
+                    { _id: 'mock1', title: 'Annual Tech Symposium', date: new Date(Date.now() + 86400000 * 5) },
+                    { _id: 'mock2', title: 'Global Career Fair 2026', date: new Date(Date.now() + 86400000 * 12) },
+                ]
+            });
+            setLoading(false);
+            return;
+        }
         try {
             const data = await studentService.getDashboard();
             setDashboardData(data);
@@ -21,6 +35,7 @@ export const StudentDashboard = () => {
             setLoading(false);
         }
     };
+
 
     if (loading) {
         return (
@@ -32,7 +47,18 @@ export const StudentDashboard = () => {
 
     return (
         <div className="space-y-6">
-            <ProfileCompletionBanner />
+            {!user ? (
+                <div className="glass-card p-8 bg-indigo-600 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl shadow-indigo-600/20 border-none">
+                    <div className="space-y-2 text-center md:text-left">
+                        <h2 className="text-2xl font-black uppercase tracking-tighter italic">Experience the Future of Campus Life</h2>
+                        <p className="text-indigo-100/70 text-sm font-bold uppercase tracking-widest">Join 5000+ students in our smart ecosystem.</p>
+                    </div>
+                    <Link to="/login/student" className="bg-white text-indigo-600 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shrink-0 shadow-xl shadow-black/10">
+                        Join the Campus
+                    </Link>
+                </div>
+            ) : <ProfileCompletionBanner />}
+
             <div>
                 <h1 className="text-4xl font-black text-gray-950 dark:text-white uppercase tracking-tighter italic leading-none">
                     Student <span className="text-gold-metallic">Portal</span>

@@ -15,12 +15,15 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { systemService } from '../../services/systemService';
+import { Link } from 'react-router-dom';
+
 
 export const AIAssistant = () => {
     const { user } = useAuth();
     const [messages, setMessages] = useState([
-        { role: 'assistant', content: `Greetings, ${user?.name}. I am the Prince College Neural Assistant. How may I assist your academic journey today?`, mode: 'Academic' }
+        { role: 'assistant', content: `Greetings, ${user?.name || 'Guest Explorer'}. I am the Prince College Neural Assistant. How may I assist your academic journey today?`, mode: mode }
     ]);
+
     const [input, setInput] = useState('');
     const [mode, setMode] = useState('Academic');
     const [loading, setLoading] = useState(false);
@@ -180,11 +183,13 @@ export const AIAssistant = () => {
                         <div className="flex-1 relative">
                             <input
                                 type="text"
-                                className="w-full bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl py-4 pl-6 pr-14 text-sm font-bold placeholder:text-gray-300 dark:placeholder:text-gray-600 outline-none focus:border-indigo-500 transition-all shadow-xl shadow-slate-200/50 dark:shadow-none"
-                                placeholder={`Ask me something in ${mode} mode...`}
+                                disabled={!user}
+                                className={`w-full bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl py-4 pl-6 pr-14 text-sm font-bold placeholder:text-gray-300 dark:placeholder:text-gray-600 outline-none focus:border-indigo-500 transition-all shadow-xl shadow-slate-200/50 dark:shadow-none ${!user ? 'cursor-not-allowed opacity-50' : ''}`}
+                                placeholder={user ? `Ask me something in ${mode} mode...` : 'Authentication Required to initialize Neural Link'}
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                             />
+
                             <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-gray-300">
                                 <Sparkles size={18} className="animate-pulse" />
                             </div>
