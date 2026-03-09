@@ -208,12 +208,12 @@ export const SettingsPage = () => {
 
             <div className="flex flex-col md:flex-row gap-8">
                 {/* Tabs Sidebar */}
-                <div className="w-full md:w-64 space-y-2">
+                <div className="w-full md:w-64 flex flex-row md:flex-col gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide shrink-0">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${activeTab === tab.id
+                            className={`flex whitespace-nowrap md:w-full items-center space-x-2 md:space-x-3 px-4 py-2 md:py-3 rounded-xl transition-all duration-200 ${activeTab === tab.id
                                 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none'
                                 : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                                 }`}
@@ -225,7 +225,7 @@ export const SettingsPage = () => {
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-1 bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-500">
+                <div className="flex-1 bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-500 overflow-hidden">
                     {message.text && (
                         <div className={`mb-6 p-4 rounded-xl border ${message.type === 'success'
                             ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-600 dark:text-green-400'
@@ -295,7 +295,7 @@ export const SettingsPage = () => {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="flex gap-3">
+                                    <div className="flex flex-wrap gap-2 sm:gap-3 mt-3">
                                         <label className="btn btn-secondary py-2 px-4 text-[10px] cursor-pointer">
                                             {uploading ? 'Archiving...' : 'Upload Banner'}
                                             <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'coverImage')} disabled={uploading} />
@@ -353,7 +353,7 @@ export const SettingsPage = () => {
                     {activeTab === 'academic' && (
                         <form onSubmit={handleAcademicSubmit} className="space-y-6">
                             <h3 className="text-xl font-bold uppercase tracking-tighter">Academic Transcript</h3>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Current CGPA</label>
                                     <input
@@ -392,7 +392,7 @@ export const SettingsPage = () => {
                     {activeTab === 'professional' && (
                         <form onSubmit={handleFacultySubmit} className="space-y-6">
                             <h3 className="text-xl font-bold uppercase tracking-tighter">Professional Credentials</h3>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Faculty ID</label>
                                     <input
@@ -597,7 +597,7 @@ export const SettingsPage = () => {
 
                             <div className="space-y-6">
                                 <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-800 transition-all hover:border-indigo-200">
-                                    <div className="flex items-center justify-between mb-4">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
                                         <div>
                                             <p className="text-sm font-black uppercase tracking-tight text-gray-900 dark:text-white">Deactivate Manifest</p>
                                             <p className="text-[10px] font-bold text-gray-400 uppercase mt-1 italic">Temporarily secure your account. Active signals will be paused.</p>
@@ -613,7 +613,7 @@ export const SettingsPage = () => {
                                 </div>
 
                                 <div className="p-6 bg-rose-50/50 dark:bg-rose-900/10 rounded-3xl border border-rose-100 dark:border-rose-900/30 transition-all hover:border-rose-300">
-                                    <div className="flex items-center justify-between mb-4">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
                                         <div>
                                             <p className="text-sm font-black uppercase tracking-tight text-rose-600">Institutional Purge</p>
                                             <p className="text-[10px] font-bold text-rose-400 uppercase mt-1 italic">Permanently delete your profile and all associated data. IRREVERSIBLE.</p>
@@ -673,8 +673,8 @@ export const SettingsPage = () => {
 };
 
 const PrivacyToggle = ({ label, desc, active, onClick }) => (
-    <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 transition-all hover:border-indigo-200">
-        <div>
+    <div className="flex items-center justify-between gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 transition-all hover:border-indigo-200">
+        <div className="flex-1 pr-2">
             <p className="text-[10px] font-black uppercase tracking-widest text-gray-900 dark:text-white">{label}</p>
             <p className="text-[9px] font-bold text-gray-400 uppercase mt-1 italic">{desc}</p>
         </div>

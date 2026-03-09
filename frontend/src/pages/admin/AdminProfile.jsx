@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { adminService } from '../../services';
+import { resolveAssetUrl } from '../../utils/assetUtils';
 
 export const AdminProfile = () => {
     const { user: currentUser } = useAuth();
@@ -44,9 +45,15 @@ export const AdminProfile = () => {
     return (
         <div className="max-w-7xl mx-auto space-y-10 p-4 md:p-8 pb-32">
             {/* Command Header */}
-            <div className="relative h-80 rounded-[3rem] overflow-hidden group shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-950 to-black"></div>
-                <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+            <div className="relative h-48 md:h-80 rounded-3xl md:rounded-[3rem] overflow-hidden group shadow-2xl mx-4 md:mx-0">
+                {currentUser?.coverImage ? (
+                    <img src={resolveAssetUrl(currentUser.coverImage)} className="absolute inset-0 w-full h-full object-cover" />
+                ) : (
+                    <>
+                        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-950 to-black"></div>
+                        <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                    </>
+                )}
 
                 {/* Visual Elements */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-gold-metallic/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
@@ -69,25 +76,25 @@ export const AdminProfile = () => {
                     </button>
                 </div>
 
-                <div className="absolute -bottom-1 left-12 flex items-end gap-10 translate-y-1/2">
+                <div className="absolute -bottom-1 left-6 md:left-12 flex items-end gap-10 translate-y-1/2">
                     <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="w-56 h-56 rounded-[3rem] bg-white dark:bg-slate-900 p-3 shadow-2xl overflow-hidden group relative"
+                        className="w-28 h-28 md:w-56 md:h-56 rounded-2xl md:rounded-[3rem] bg-white dark:bg-slate-900 p-1.5 md:p-3 shadow-2xl overflow-hidden group relative"
                     >
                         {currentUser?.profileImage ? (
-                            <img src={currentUser.profileImage} className="w-full h-full object-cover rounded-[2.5rem]" />
+                            <img src={resolveAssetUrl(currentUser.profileImage)} className="w-full h-full object-cover rounded-xl md:rounded-[2.5rem]" />
                         ) : (
                             <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center text-7xl font-black text-gold-metallic italic">
                                 {currentUser?.name?.charAt(0)}
                             </div>
                         )}
-                        <div className="absolute inset-0 border-2 border-gold-metallic/20 rounded-[3rem] pointer-events-none"></div>
+                        <div className="absolute inset-0 border-2 border-gold-metallic/20 rounded-2xl md:rounded-[3rem] pointer-events-none"></div>
                     </motion.div>
 
-                    <div className="pb-8 space-y-2">
+                    <div className="pb-8 space-y-2 hidden md:block">
                         <div className="flex items-center gap-3">
-                            <h1 className="text-5xl font-black text-white uppercase tracking-tighter italic drop-shadow-lg">
+                            <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter italic drop-shadow-lg">
                                 {currentUser?.name}
                             </h1>
                             <div className="px-3 py-1 bg-gold-metallic text-slate-900 text-[10px] font-black uppercase tracking-widest rounded-lg shadow-lg shadow-gold-metallic/20">
@@ -102,7 +109,22 @@ export const AdminProfile = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-32 px-4 md:px-0">
+            <div className="md:hidden px-6 pt-16 space-y-2">
+                <div className="flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tighter italic drop-shadow-lg">
+                        {currentUser?.name}
+                    </h1>
+                    <div className="px-3 py-1 bg-gold-metallic text-slate-900 text-[10px] font-black uppercase tracking-widest rounded-lg shadow-lg shadow-gold-metallic/20">
+                        root_active
+                    </div>
+                </div>
+                <p className="text-gold-metallic/70 font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-2">
+                    <span className="w-6 h-[1px] bg-gold-metallic/50"></span>
+                    CHIEF ADMINISTRATOR
+                </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-10 md:pt-32 px-4 md:px-0">
                 {/* Registry Data */}
                 <div className="lg:col-span-4 space-y-8">
                     <div className="glass-card p-8 border-slate-100 dark:border-slate-800 space-y-6 relative overflow-hidden group">

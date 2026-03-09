@@ -50,8 +50,8 @@ export const StudentDashboard = () => {
             {!user ? (
                 <div className="glass-card p-8 bg-indigo-600 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl shadow-indigo-600/20 border-none">
                     <div className="space-y-2 text-center md:text-left">
-                        <h2 className="text-2xl font-black uppercase tracking-tighter italic">Experience the Future of Campus Life</h2>
-                        <p className="text-indigo-100/70 text-sm font-bold uppercase tracking-widest">Join 5000+ students in our smart ecosystem.</p>
+                        <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter italic">Experience the Future of Campus Life</h2>
+                        <p className="text-indigo-100/70 text-xs md:text-sm font-bold uppercase tracking-widest">Join 5000+ students in our smart ecosystem.</p>
                     </div>
                     <Link to="/login/student" className="bg-white text-indigo-600 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shrink-0 shadow-xl shadow-black/10">
                         Join the Campus
@@ -103,12 +103,12 @@ export const StudentDashboard = () => {
                 {dashboardData?.upcomingEvents?.length > 0 ? (
                     <div className="space-y-3">
                         {dashboardData.upcomingEvents.map((event) => (
-                            <div key={event._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div key={event._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 dark:bg-slate-800 rounded-lg gap-3">
                                 <div>
-                                    <h3 className="font-semibold">{event.title}</h3>
-                                    <p className="text-sm text-gray-600">{new Date(event.date).toLocaleDateString()}</p>
+                                    <h3 className="font-semibold text-slate-900 dark:text-white">{event.title}</h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">{new Date(event.date).toLocaleDateString()}</p>
                                 </div>
-                                <Link to="/student/events" className="btn btn-outline btn-sm">
+                                <Link to="/student/events" className="btn btn-outline btn-sm w-full sm:w-auto text-center justify-center">
                                     View Details
                                 </Link>
                             </div>
@@ -120,7 +120,7 @@ export const StudentDashboard = () => {
             </div>
 
             {/* Quick Actions */}
-            <div className="grid md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Link to="/student/attendance" className="card text-center hover:shadow-medium transition-shadow">
                     <div className="text-4xl mb-2">📅</div>
                     <h3 className="font-semibold">View Attendance</h3>

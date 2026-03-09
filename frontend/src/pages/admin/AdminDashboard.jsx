@@ -65,7 +65,7 @@ export const AdminDashboard = () => {
     return (
         <div className="max-w-7xl mx-auto space-y-10 p-4 md:p-8 pb-32">
             {!user ? (
-                <div className="glass-card p-10 bg-gradient-to-r from-red-950 via-slate-900 to-red-950 text-white flex flex-col md:flex-row items-center justify-between gap-8 border-none shadow-2xl relative overflow-hidden">
+                <div className="glass-card p-6 md:p-10 bg-gradient-to-r from-red-950 via-slate-900 to-red-950 text-white flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 border-none shadow-2xl relative overflow-hidden">
                     <div className="relative z-10 space-y-3">
                         <div className="flex items-center gap-3">
                             <ShieldAlert className="text-rose-500" size={24} />
@@ -143,7 +143,7 @@ export const AdminDashboard = () => {
                             <Link key={idx} to={action.path}>
                                 <motion.div
                                     whileHover={{ y: -8, scale: 1.02 }}
-                                    className="glass-card p-8 flex items-center gap-6 group border-slate-100 dark:border-slate-800 hover:border-indigo-500/50 transition-all cursor-pointer relative overflow-hidden"
+                                    className="glass-card p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 group border-slate-100 dark:border-slate-800 hover:border-indigo-500/50 transition-all cursor-pointer relative overflow-hidden text-center sm:text-left"
                                 >
                                     <div className={`w-14 h-14 rounded-2xl ${action.color} text-white flex items-center justify-center shadow-lg shadow-indigo-600/10 group-hover:rotate-12 transition-transform`}>
                                         {action.icon}

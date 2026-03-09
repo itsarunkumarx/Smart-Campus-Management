@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { facultyService } from '../../services';
 import { Link } from 'react-router-dom';
+import { resolveAssetUrl } from '../../utils/assetUtils';
 
 export const StudentManagement = () => {
     const [students, setStudents] = useState([]);
@@ -120,7 +121,7 @@ export const StudentManagement = () => {
                                         <div className="absolute -bottom-6 left-6">
                                             <div className="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 p-1 shadow-lg border border-slate-100 dark:border-slate-700">
                                                 {student.profileImage ? (
-                                                    <img src={student.profileImage} className="w-full h-full object-cover rounded-xl" />
+                                                    <img src={resolveAssetUrl(student.profileImage)} className="w-full h-full object-cover rounded-xl" />
                                                 ) : (
                                                     <div className="w-full h-full bg-indigo-50 dark:bg-indigo-900/40 rounded-xl flex items-center justify-center text-indigo-500 font-black text-xl">
                                                         {student.name?.charAt(0).toUpperCase()}
@@ -158,9 +159,15 @@ export const StudentManagement = () => {
                             ) : (
                                 // Card Content - List Mode
                                 <>
-                                    <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-500 font-black text-lg">
-                                        {student.name?.charAt(0).toUpperCase()}
-                                    </div>
+                                    {student.profileImage ? (
+                                        <div className="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 overflow-hidden flex items-center justify-center border border-slate-100 dark:border-slate-700">
+                                            <img src={resolveAssetUrl(student.profileImage)} className="w-full h-full object-cover" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-500 font-black text-lg">
+                                            {student.name?.charAt(0).toUpperCase()}
+                                        </div>
+                                    )}
                                     <div className="flex-1">
                                         <h3 className="font-black text-gray-900 dark:text-white uppercase tracking-tight group-hover:text-indigo-600 transition-colors">{student.name}</h3>
                                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{student.username} · {student.department} · {student.year} Year</p>

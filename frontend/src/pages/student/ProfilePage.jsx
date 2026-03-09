@@ -110,9 +110,9 @@ export const ProfilePage = () => {
     return (
         <div className="max-w-6xl mx-auto space-y-8 pb-20">
             {/* Hero Header */}
-            <div className="relative h-64 shadow-2xl group">
+            <div className="relative h-48 md:h-64 shadow-2xl group mx-4 md:mx-0">
                 {/* Banner Container with overflow-hidden */}
-                <div className="absolute inset-0 rounded-[3rem] overflow-hidden">
+                <div className="absolute inset-0 rounded-3xl md:rounded-[3rem] overflow-hidden">
                     {profile.coverImage ? (
                         <img src={resolveAssetUrl(profile.coverImage)} className="w-full h-full object-cover" />
                     ) : (
@@ -125,11 +125,11 @@ export const ProfilePage = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="absolute top-8 right-8 flex gap-3 z-10">
+                <div className="absolute top-4 right-4 md:top-8 md:right-8 flex gap-2 md:gap-3 z-10">
                     {isOwnProfile ? (
                         <button
                             onClick={() => navigate('/settings')}
-                            className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-white hover:bg-white/20 transition-all"
+                            className="bg-white/10 backdrop-blur-md border border-white/20 p-2 md:p-4 rounded-xl md:rounded-2xl text-white hover:bg-white/20 transition-all"
                         >
                             <Edit2 size={20} />
                         </button>
@@ -137,31 +137,31 @@ export const ProfilePage = () => {
                         <>
                             <button
                                 onClick={handleFollow}
-                                className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${isFollowing ? 'bg-white/10 text-white' : 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/30'
+                                className={`flex items-center gap-1 md:gap-2 px-4 py-2 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black text-[9px] md:text-[10px] uppercase tracking-widest transition-all ${isFollowing ? 'bg-white/10 text-white' : 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/30'
                                     }`}
                             >
                                 {isFollowing ? <><UserMinus size={14} /> Unfollow</> : <><UserPlus size={14} /> Follow Scout</>}
                             </button>
                             <button
                                 onClick={handleMessage}
-                                className="bg-white/10 backdrop-blur-md border border-white/20 px-8 py-4 rounded-2xl text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all"
+                                className="bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 md:px-8 md:py-4 rounded-xl md:rounded-2xl text-white font-black text-[9px] md:text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all flex items-center"
                             >
-                                <MessageCircle size={14} className="inline mr-2" /> Message
+                                <MessageCircle size={14} className="md:mr-2 mr-1" /> <span className="hidden sm:inline">Message</span>
                             </button>
                         </>
                     )}
                 </div>
 
                 {/* Avatar (Positioned relative to header but outside overflow-hidden) */}
-                <div className="absolute -bottom-1 left-12 translate-y-1/4 z-20">
+                <div className="absolute -bottom-1 left-6 md:left-12 translate-y-1/4 z-20">
                     <div
                         onClick={() => profile.profileImage && setShowImageModal(true)}
-                        className={`w-44 h-44 rounded-[2.5rem] bg-white dark:bg-slate-900 p-1.5 shadow-2xl overflow-hidden group-hover:rotate-3 transition-transform duration-500 ${profile.profileImage ? 'cursor-pointer' : ''}`}
+                        className={`w-28 h-28 md:w-44 md:h-44 rounded-2xl md:rounded-[2.5rem] bg-white dark:bg-slate-900 p-1.5 shadow-2xl overflow-hidden group-hover:rotate-3 transition-transform duration-500 ${profile.profileImage ? 'cursor-pointer' : ''}`}
                     >
                         {profile.profileImage ? (
-                            <img src={resolveAssetUrl(profile.profileImage)} className="w-full h-full object-cover rounded-[2rem]" />
+                            <img src={resolveAssetUrl(profile.profileImage)} className="w-full h-full object-cover rounded-[1rem] md:rounded-[2rem]" />
                         ) : (
-                            <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-4xl font-black text-indigo-600">
+                            <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-3xl md:text-4xl font-black text-indigo-600 rounded-[1rem] md:rounded-[2rem]">
                                 {profile.name.charAt(0)}
                             </div>
                         )}
@@ -169,7 +169,7 @@ export const ProfilePage = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-24 px-6 md:px-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-16 md:pt-24 px-4 sm:px-6 md:px-12">
                 {/* Sidebar Info */}
                 <div className="lg:col-span-4 space-y-8">
                     <div>

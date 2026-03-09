@@ -20,12 +20,11 @@ import { Link } from 'react-router-dom';
 
 export const AIAssistant = () => {
     const { user } = useAuth();
-    const [messages, setMessages] = useState([
-        { role: 'assistant', content: `Greetings, ${user?.name || 'Guest Explorer'}. I am the Prince College Neural Assistant. How may I assist your academic journey today?`, mode: mode }
-    ]);
-
-    const [input, setInput] = useState('');
     const [mode, setMode] = useState('Academic');
+    const [messages, setMessages] = useState([
+        { role: 'assistant', content: `Greetings, ${user?.name || 'Guest Explorer'}. I am the Prince College Neural Assistant. How may I assist your academic journey today?`, mode: 'Academic' }
+    ]);
+    const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [systemSettings, setSystemSettings] = useState(null);
 
@@ -91,7 +90,7 @@ export const AIAssistant = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto h-[calc(100vh-140px)] flex flex-col gap-6">
+        <div className="max-w-4xl mx-auto h-[calc(100vh-200px)] md:h-[calc(100vh-140px)] flex flex-col gap-4 md:gap-6">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-600/20">
@@ -105,7 +104,7 @@ export const AIAssistant = () => {
                     </div>
                 </div>
 
-                <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl gap-2">
+                <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl gap-1 md:gap-2 overflow-x-auto w-full md:w-auto overflow-y-hidden">
                     {[
                         { id: 'Academic', icon: <BookOpen size={14} /> },
                         { id: 'Casual', icon: <MessageSquare size={14} /> },
@@ -114,7 +113,7 @@ export const AIAssistant = () => {
                         <button
                             key={m.id}
                             onClick={() => setMode(m.id)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === m.id
+                            className={`flex items-center gap-1 md:gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${mode === m.id
                                 ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-md'
                                 : 'text-gray-400 hover:text-gray-600'
                                 }`}
@@ -178,8 +177,8 @@ export const AIAssistant = () => {
                     <div ref={messagesEndRef} />
                 </div>
 
-                <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800">
-                    <form onSubmit={handleSend} className="relative flex items-center gap-4">
+                <div className="p-4 md:p-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800">
+                    <form onSubmit={handleSend} className="relative flex items-center gap-2 md:gap-4">
                         <div className="flex-1 relative">
                             <input
                                 type="text"
@@ -194,20 +193,20 @@ export const AIAssistant = () => {
                                 <Sparkles size={18} className="animate-pulse" />
                             </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-1 md:gap-2">
                             <button
                                 type="button"
                                 onClick={clearChat}
-                                className="p-4 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-800 text-gray-400 rounded-2xl hover:text-rose-500 hover:border-rose-100 transition-all"
+                                className="p-3 md:p-4 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-800 text-gray-400 rounded-xl md:rounded-2xl hover:text-rose-500 hover:border-rose-100 transition-all flex-shrink-0"
                             >
-                                <Trash2 size={24} />
+                                <Trash2 className="w-5 h-5 md:w-6 md:h-6" />
                             </button>
                             <button
                                 type="submit"
                                 disabled={!input.trim() || loading}
-                                className="p-4 bg-indigo-600 text-white rounded-2xl shadow-xl shadow-indigo-600/20 hover:scale-105 active:scale-95 disabled:opacity-50 transition-all"
+                                className="p-3 md:p-4 bg-indigo-600 text-white rounded-xl md:rounded-2xl shadow-xl shadow-indigo-600/20 hover:scale-105 active:scale-95 disabled:opacity-50 transition-all flex-shrink-0"
                             >
-                                <Send size={24} />
+                                <Send className="w-5 h-5 md:w-6 md:h-6" />
                             </button>
                         </div>
                     </form>

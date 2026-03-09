@@ -86,7 +86,7 @@ export const RoleSelectionPage = () => {
                         </div>
                     </div>
 
-                    <h1 className="text-6xl md:text-8xl font-black mb-6 bg-gradient-to-r from-slate-950 via-slate-800 to-amber-700 dark:from-white dark:via-amber-200 dark:to-gold-metallic bg-clip-text text-transparent uppercase tracking-tighter italic drop-shadow-2xl">
+                    <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-4 md:mb-6 bg-gradient-to-r from-slate-950 via-slate-800 to-amber-700 dark:from-white dark:via-amber-200 dark:to-gold-metallic bg-clip-text text-transparent uppercase tracking-tighter italic drop-shadow-2xl">
                         Choose Your Portal
                     </h1>
                     <p className="text-xl text-slate-600 dark:text-amber-100/60 max-w-2xl mx-auto font-medium">
@@ -110,7 +110,7 @@ export const RoleSelectionPage = () => {
                             {/* Card */}
                             <motion.div
                                 whileHover={{ scale: 1.02 }}
-                                className="relative bg-white/70 dark:bg-white/5 backdrop-blur-3xl rounded-2xl p-8 border border-slate-200 dark:border-white/10 hover:border-gold-metallic/50 dark:hover:border-gold-metallic/30 shadow-2xl dark:shadow-none transition-all duration-300 transform h-full overflow-hidden"
+                                className="relative bg-white/70 dark:bg-white/5 backdrop-blur-3xl rounded-2xl p-6 md:p-8 border border-slate-200 dark:border-white/10 hover:border-gold-metallic/50 dark:hover:border-gold-metallic/30 shadow-2xl dark:shadow-none transition-all duration-300 transform h-full overflow-hidden"
                             >
                                 {/* Icon */}
                                 <div className={`w-20 h-20 bg-gradient-to-br ${hoveredRole === role ? hoverGradient : gradient} rounded-2xl flex items-center justify-center text-5xl mb-6 transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg`}>

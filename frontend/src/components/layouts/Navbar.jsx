@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import ThemeToggle from '../ThemeToggle';
 import NotificationBell from './NotificationBell';
+import { resolveAssetUrl } from '../../utils/assetUtils';
 
 export const Navbar = () => {
     const { user, logout } = useAuth();
@@ -56,12 +57,12 @@ export const Navbar = () => {
                             <div className="w-10 h-10 bg-gradient-to-br from-gold-metallic via-amber-600 to-gold-dark rounded-lg flex items-center justify-center shadow-lg shadow-gold-metallic/20 transform group-hover:rotate-12 transition-transform duration-500">
                                 <span className="text-white font-bold text-xl drop-shadow-md">SC</span>
                             </div>
-                            <span className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">Smart <span className="text-gold-metallic">Campus</span></span>
+                            <span className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">Smart <span className="text-gold-metallic hidden sm:inline">Campus</span></span>
                         </Link>
                     </div>
 
-                    <div className="flex items-center space-x-6">
-                        <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2 md:space-x-6">
+                        <div className="flex items-center space-x-2 md:space-x-4">
                             <ThemeToggle />
                             {user && <NotificationBell />}
                         </div>
@@ -72,12 +73,18 @@ export const Navbar = () => {
                                     onClick={() => setShowDropdown(!showDropdown)}
                                     className="flex items-center space-x-2 text-gray-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                                 >
-                                    <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
-                                        <span className="text-white font-medium text-sm">
-                                            {user.name.charAt(0).toUpperCase()}
-                                        </span>
-                                    </div>
-                                    <span className="hidden md:block">{user.name}</span>
+                                    {user.profileImage ? (
+                                        <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border-2 border-slate-100 dark:border-slate-700">
+                                            <img src={resolveAssetUrl(user.profileImage)} className="w-full h-full object-cover" alt="" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
+                                            <span className="text-white font-medium text-sm">
+                                                {user.name.charAt(0).toUpperCase()}
+                                            </span>
+                                        </div>
+                                    )}
+                                    <span className="hidden md:block max-w-[120px] truncate">{user.name}</span>
                                 </button>
 
                                 {showDropdown && (
@@ -106,14 +113,14 @@ export const Navbar = () => {
                                 )}
                             </div>
                         ) : (
-                            <>
+                            <div className="flex gap-2 scale-90 md:scale-100 origin-right">
                                 <Link to="/login" className="btn btn-outline dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
                                     Login
                                 </Link>
-                                <Link to="/register" className="btn btn-primary">
+                                <Link to="/register" className="btn btn-primary hidden sm:flex">
                                     Register
                                 </Link>
-                            </>
+                            </div>
                         )}
                     </div>
                 </div>

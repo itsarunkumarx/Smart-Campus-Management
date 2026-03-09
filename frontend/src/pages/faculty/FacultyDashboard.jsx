@@ -65,7 +65,7 @@ export const FacultyDashboard = () => {
     return (
         <div className="max-w-7xl mx-auto space-y-10 p-4 md:p-8 pb-32">
             {!user ? (
-                <div className="glass-card p-10 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-8 border-none shadow-2xl relative overflow-hidden">
+                <div className="glass-card p-6 md:p-10 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 border-none shadow-2xl relative overflow-hidden">
                     <div className="relative z-10 space-y-3">
                         <div className="flex items-center gap-3">
                             <ShieldAlert className="text-gold-metallic" size={24} />
@@ -162,7 +162,7 @@ export const FacultyDashboard = () => {
                         ))}
                     </div>
 
-                    <div className="glass-card bg-indigo-600 text-white p-8 overflow-hidden relative group">
+                    <div className="glass-card bg-indigo-600 text-white p-6 md:p-8 overflow-hidden relative group">
                         <div className="relative z-10 space-y-4">
                             <Navigation className="opacity-50" size={32} />
                             <h3 className="text-xl font-black uppercase tracking-tight leading-none text-white/90">Institutional Knowledge</h3>

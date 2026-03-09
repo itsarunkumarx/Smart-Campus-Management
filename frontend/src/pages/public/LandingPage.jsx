@@ -43,7 +43,7 @@ export const LandingPage = () => {
                         {/* Main Heading with Parallax */}
                         <motion.h1
                             style={{ x: textX, y: textY }}
-                            className="text-6xl md:text-8xl font-black mb-8 animate-slide-up uppercase tracking-tighter italic"
+                            className="text-4xl sm:text-6xl md:text-8xl font-black mb-8 animate-slide-up uppercase tracking-tighter italic"
                         >
                             <span className="bg-gradient-to-r from-slate-950 via-slate-800 to-amber-700 dark:from-white dark:via-white/90 dark:to-gold-metallic bg-clip-text text-transparent drop-shadow-2xl">
                                 Smart Campus
@@ -58,16 +58,16 @@ export const LandingPage = () => {
                         </p>
 
                         {/* CTA Buttons */}
-                        <div className="flex flex-wrap justify-center gap-6 animate-fade-in animation-delay-1000">
+                        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-6 animate-fade-in animation-delay-1000 px-2 sm:px-0">
                             <Link
                                 to="/register"
-                                className="btn btn-primary px-8 py-4 sm:px-12 sm:py-5 text-xl tracking-tight"
+                                className="btn btn-primary px-6 py-4 sm:px-12 sm:py-5 text-lg sm:text-xl tracking-tight w-full sm:w-auto flex justify-center items-center"
                             >
                                 <span className="relative z-10 uppercase font-black text-sm sm:text-base">Initialize Interface</span>
                             </Link>
                             <Link
                                 to="/role-selection"
-                                className="btn btn-secondary px-8 py-4 sm:px-12 sm:py-5 text-xl min-w-[200px]"
+                                className="btn btn-secondary px-6 py-4 sm:px-12 sm:py-5 text-lg sm:text-xl min-w-[200px] w-full sm:w-auto flex justify-center items-center"
                             >
                                 Sign In →
                             </Link>
@@ -163,15 +163,15 @@ export const LandingPage = () => {
             </div>
 
             {/* CTA Section */}
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 overflow-hidden">
                 <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-sky-600 rounded-3xl blur-xl opacity-20 dark:opacity-50"></div>
-                    <div className="relative bg-gradient-to-r from-indigo-600 to-sky-600 rounded-3xl p-12 text-center text-white">
-                        <h2 className="text-4xl font-bold mb-4">Ready to Get Started?</h2>
-                        <p className="text-xl text-indigo-100 mb-8">Join thousands of students, faculty, and administrators</p>
+                    <div className="relative bg-gradient-to-r from-indigo-600 to-sky-600 rounded-3xl p-8 md:p-12 text-center text-white">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
+                        <p className="text-lg md:text-xl text-indigo-100 mb-8 max-w-lg mx-auto">Join thousands of students, faculty, and administrators</p>
                         <Link
                             to="/register"
-                            className="inline-block px-8 py-4 bg-white text-indigo-600 rounded-xl font-bold text-lg hover:bg-slate-50 transform hover:-translate-y-1 transition-all duration-300 shadow-xl"
+                            className="inline-block px-6 py-4 sm:px-8 sm:py-4 bg-white text-indigo-600 rounded-xl font-bold text-base sm:text-lg hover:bg-slate-50 transform hover:-translate-y-1 transition-all duration-300 shadow-xl w-full sm:w-auto mt-2"
                         >
                             Create Your Account Now
                         </Link>

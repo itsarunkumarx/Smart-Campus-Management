@@ -111,18 +111,18 @@ export const PostsPage = () => {
                 className="group relative h-32 rounded-[2rem] bg-gradient-to-r from-indigo-900 to-indigo-600 p-[2px] cursor-pointer shadow-2xl hover:scale-[1.02] transition-all overflow-hidden"
             >
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-                <div className="h-full w-full bg-white dark:bg-slate-900 rounded-[1.9rem] flex items-center justify-between px-10 relative">
-                    <div className="flex items-center gap-6">
-                        <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/50 rounded-2xl flex items-center justify-center text-indigo-600">
-                            <PlusCircle size={32} />
+                <div className="h-full w-full bg-white dark:bg-slate-900 rounded-[1.9rem] flex items-center justify-between px-4 md:px-10 relative">
+                    <div className="flex items-center gap-4 md:gap-6">
+                        <div className="w-12 h-12 md:w-16 md:h-16 bg-indigo-50 dark:bg-indigo-900/50 rounded-2xl flex items-center justify-center text-indigo-600 shrink-0">
+                            <PlusCircle className="w-6 h-6 md:w-8 md:h-8" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-black uppercase tracking-tighter italic">Create Manifest</h3>
+                            <h3 className="text-lg md:text-xl font-black uppercase tracking-tighter italic">Create Manifest</h3>
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Status: Active · Broadcast Mode On</p>
                         </div>
                     </div>
-                    <div className="p-4 bg-indigo-600 text-white rounded-2xl group-hover:rotate-12 transition-transform">
-                        <ChevronRight size={24} />
+                    <div className="p-3 md:p-4 bg-indigo-600 text-white rounded-2xl group-hover:rotate-12 transition-transform shrink-0">
+                        <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
                     </div>
                 </div>
             </motion.div>
@@ -199,15 +199,15 @@ const PostCard = ({ post, currentUser, onLike, onDelete, onReport }) => {
             layout
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-card rounded-[2.5rem] overflow-hidden shadow-xl border-slate-100 dark:border-white/5 transition-all hover:shadow-2xl hover:border-indigo-100 dark:hover:border-indigo-900/30"
+            className="glass-card rounded-3xl md:rounded-[2.5rem] overflow-hidden shadow-xl border-slate-100 dark:border-white/5 transition-all hover:shadow-2xl hover:border-indigo-100 dark:hover:border-indigo-900/30"
         >
-            <div className="p-8 space-y-6">
+            <div className="p-4 md:p-8 space-y-4 md:space-y-6">
                 {/* Post Header */}
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 md:gap-4">
                         <div
                             onClick={() => navigate(`/profile/${post.userId?._id}`)}
-                            className="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center p-1 cursor-pointer border border-transparent hover:border-indigo-400 transition-all"
+                            className="w-10 h-10 md:w-14 md:h-14 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl md:rounded-2xl flex items-center justify-center p-1 cursor-pointer border border-transparent hover:border-indigo-400 transition-all shrink-0"
                         >
                             {post.userId?.profileImage ? (
                                 <img src={resolveAssetUrl(post.userId.profileImage)} alt={post.userId.name} className="w-full h-full object-cover rounded-xl" />
@@ -216,7 +216,7 @@ const PostCard = ({ post, currentUser, onLike, onDelete, onReport }) => {
                             )}
                         </div>
                         <div>
-                            <h4 className="font-black text-lg uppercase tracking-tighter italic flex items-center gap-2">
+                            <h4 className="font-black text-sm md:text-lg uppercase tracking-tighter italic flex flex-wrap items-center gap-1 md:gap-2">
                                 <span className="cursor-pointer hover:text-indigo-600 transition-colors" onClick={() => navigate(`/profile/${post.userId?._id}`)}>
                                     {post.userId?.name}
                                 </span>
@@ -224,7 +224,7 @@ const PostCard = ({ post, currentUser, onLike, onDelete, onReport }) => {
                                     {post.userId?.role}
                                 </span>
                             </h4>
-                            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5 italic">
+                            <p className="text-[8px] md:text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5 italic">
                                 {new Date(post.createdAt).toLocaleDateString()} · {post.visibility} scope
                             </p>
                         </div>
@@ -256,7 +256,7 @@ const PostCard = ({ post, currentUser, onLike, onDelete, onReport }) => {
                     {post.media?.length > 0 && (
                         <div className="rounded-[2rem] overflow-hidden bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 group relative">
                             {post.media[0].type === 'image' ? (
-                                <img src={resolveAssetUrl(post.media[0].url)} className="w-full max-h-[500px] object-cover transition-transform duration-700 group-hover:scale-105" alt="Post" />
+                                <img src={resolveAssetUrl(post.media[0].url)} loading="lazy" className="w-full max-h-[500px] object-cover transition-transform duration-700 group-hover:scale-105" alt="Post" />
                             ) : (
                                 <video src={resolveAssetUrl(post.media[0].url)} className="w-full max-h-[500px] object-cover" />
                             )}
@@ -268,7 +268,7 @@ const PostCard = ({ post, currentUser, onLike, onDelete, onReport }) => {
                 </div>
 
                 {/* Post Actions */}
-                <div className="flex items-center gap-8 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-4 md:gap-8 pt-4 border-t border-slate-100 dark:border-slate-800">
                     <button onClick={onLike} className={`flex items-center gap-2 group transition-all ${isLiked ? 'text-rose-500 scale-110' : 'text-gray-400 hover:text-rose-500'}`}>
                         <Heart size={22} fill={isLiked ? "currentColor" : "none"} className={isLiked ? "animate-heartbeat" : "group-hover:scale-110 transition-transform"} />
                         <span className="text-sm font-black italic">{post.likes.length}</span>

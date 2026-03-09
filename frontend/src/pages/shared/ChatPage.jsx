@@ -22,7 +22,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { useLocation, Link } from 'react-router-dom';
-
+import { resolveAssetUrl } from '../../utils/assetUtils';
 
 /* ─── Helpers ─────────────────────────────────────── */
 const fileIcon = (type) => {
@@ -335,7 +335,7 @@ export const ChatPage = () => {
                             >
                                 <div className="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-700 flex-shrink-0 overflow-hidden">
                                     {getChatImage(chat) ? (
-                                        <img src={getChatImage(chat)} className="w-full h-full object-cover" alt="" />
+                                        <img src={resolveAssetUrl(getChatImage(chat))} className="w-full h-full object-cover" alt="" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-gray-400">
                                             {chat.isGroupChat ? <Users size={20} /> : <User size={20} />}
@@ -376,7 +376,7 @@ export const ChatPage = () => {
                                 </button>
                                 <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
                                     {getChatImage(selectedChat) ? (
-                                        <img src={getChatImage(selectedChat)} className="w-full h-full object-cover" alt="" />
+                                        <img src={resolveAssetUrl(getChatImage(selectedChat))} className="w-full h-full object-cover" alt="" />
                                     ) : (
                                         selectedChat.isGroupChat ? <Users size={20} /> : <User size={20} />
                                     )}

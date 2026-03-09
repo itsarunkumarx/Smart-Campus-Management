@@ -107,7 +107,7 @@ export const RegisterPage = () => {
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 dark:bg-amber-500/10 rounded-full filter blur-[120px] animate-pulse animation-delay-2000"></div>
 
             <div className="relative max-w-2xl mx-auto px-4">
-                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-xl p-8 border border-white dark:border-slate-800 transition-colors duration-500">
+                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-xl p-6 md:p-8 border border-white dark:border-slate-800 transition-colors duration-500">
                     <div className="text-center mb-8">
                         <div className="text-7xl mb-6 drop-shadow-xl">👨‍🎓</div>
                         <h2 className="text-3xl font-black text-slate-950 dark:text-white uppercase tracking-tighter italic">

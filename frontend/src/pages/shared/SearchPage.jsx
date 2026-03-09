@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
+import { resolveAssetUrl } from '../../utils/assetUtils';
 
 export const SearchPage = () => {
     const { user: currentUser } = useAuth();
@@ -118,7 +119,7 @@ export const SearchPage = () => {
                                         className="w-16 h-16 rounded-2xl bg-indigo-600 overflow-hidden shadow-lg shadow-indigo-600/20 group-hover:rotate-6 transition-transform cursor-pointer shrink-0"
                                     >
                                         {result.profileImage ? (
-                                            <img src={result.profileImage} alt={result.name} className="w-full h-full object-cover" />
+                                            <img src={resolveAssetUrl(result.profileImage)} alt={result.name} className="w-full h-full object-cover" />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center text-white text-2xl font-black uppercase">
                                                 {result.name?.charAt(0) || '?'}
