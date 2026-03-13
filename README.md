@@ -1,3 +1,0 @@
-site link:https://smart-campus-management-five.vercel.app/
-
-...
