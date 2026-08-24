@@ -479,10 +479,10 @@ const googleLogin = async (req, res) => {
         }
 
         // Generate institutional session token
-        const token = generateToken(res, user._id);
+        const jwtToken = generateToken(res, user._id);
 
         res.json({
-            token,
+            token: jwtToken,
             _id: user._id,
             name: user.name,
             username: user.username,
