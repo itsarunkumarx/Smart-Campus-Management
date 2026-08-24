@@ -44,6 +44,13 @@ const DetailedPostPage = lazy(() => import('./pages/shared/DetailedPostPage').th
 const AddFacultyPage = lazy(() => import('./pages/admin/AddFacultyPage').then(m => ({ default: m.AddFacultyPage })));
 const ChangePasswordPage = lazy(() => import('./pages/auth/ChangePasswordPage').then(m => ({ default: m.ChangePasswordPage })));
 
+// AI Face Recognition Pages
+const FaceProfilePage = lazy(() => import('./pages/shared/FaceProfilePage').then(m => ({ default: m.FaceProfilePage })));
+const FaceAttendance = lazy(() => import('./pages/faculty/FaceAttendance').then(m => ({ default: m.FaceAttendance })));
+const AccessControlPage = lazy(() => import('./pages/shared/AccessControlPage').then(m => ({ default: m.AccessControlPage })));
+const SecurityEventsPage = lazy(() => import('./pages/admin/SecurityEventsPage').then(m => ({ default: m.SecurityEventsPage })));
+const AttendanceAnalyticsPage = lazy(() => import('./pages/admin/AttendanceAnalyticsPage').then(m => ({ default: m.AttendanceAnalyticsPage })));
+
 
 function AppRoutes() {
   const { user } = useAuth();
@@ -62,11 +69,11 @@ function AppRoutes() {
     <div className="min-h-screen">
       <Navbar />
       <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)]">
-        {(user || ['/student/dashboard', '/student/placements', '/student/scholarships', '/student/events', '/student/posts', '/student/attendance', '/student/notifications', '/ai-assistant', '/search'].some(path => location.pathname.startsWith(path)) || location.pathname.startsWith('/post/') || location.pathname.startsWith('/profile/') || location.pathname.startsWith('/faculty/dashboard') || location.pathname.startsWith('/admin/dashboard') || location.pathname.startsWith('/chat')) && <Sidebar />}
+        {(user || ['/student/dashboard', '/student/placements', '/student/scholarships', '/student/events', '/student/posts', '/student/attendance', '/student/notifications', '/ai-assistant', '/search', '/face-profile', '/access-control'].some(path => location.pathname.startsWith(path)) || location.pathname.startsWith('/post/') || location.pathname.startsWith('/profile/') || location.pathname.startsWith('/faculty/') || location.pathname.startsWith('/admin/') || location.pathname.startsWith('/chat')) && <Sidebar />}
 
 
 
-        <main className={`flex-1 w-full pb-20 md:pb-0 ${(user || ['/student/dashboard', '/student/placements', '/student/scholarships', '/student/events', '/student/posts', '/student/attendance', '/student/notifications', '/ai-assistant', '/search', '/profile/', '/faculty/dashboard', '/admin/dashboard', '/chat'].some(path => location.pathname.startsWith(path)) || location.pathname.startsWith('/post/')) ? 'p-4 md:p-8' : ''}`}>
+        <main className={`flex-1 w-full pb-20 md:pb-0 ${(user || ['/student/dashboard', '/student/placements', '/student/scholarships', '/student/events', '/student/posts', '/student/attendance', '/student/notifications', '/ai-assistant', '/search', '/profile/', '/faculty/', '/admin/', '/chat', '/face-profile', '/access-control'].some(path => location.pathname.startsWith(path)) || location.pathname.startsWith('/post/')) ? 'p-4 md:p-8' : ''}`}>
 
 
 
@@ -326,6 +333,48 @@ function AppRoutes() {
                 element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <AIControlCenter />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* AI Face Recognition Routes */}
+              <Route
+                path="/face-profile"
+                element={
+                  <ProtectedRoute allowedRoles={['student', 'faculty', 'admin']}>
+                    <FaceProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/faculty/face-attendance"
+                element={
+                  <ProtectedRoute allowedRoles={['faculty']}>
+                    <FaceAttendance />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/access-control"
+                element={
+                  <ProtectedRoute allowedRoles={['student', 'faculty', 'admin']}>
+                    <AccessControlPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/security"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <SecurityEventsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/analytics"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AttendanceAnalyticsPage />
                   </ProtectedRoute>
                 }
               />

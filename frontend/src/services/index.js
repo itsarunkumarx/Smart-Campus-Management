@@ -1,6 +1,7 @@
 import api from './api';
+import faceService from './faceService';
 
-export { api };
+export { api, faceService };
 
 export const authService = {
     register: async (userData) => {

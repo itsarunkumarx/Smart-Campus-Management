@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../services';
+
+const FaceRegistration = lazy(() => import('../../components/face/FaceRegistration').then(m => ({ default: m.FaceRegistration })));
 
 export const RegisterPage = () => {
     const navigate = useNavigate();
@@ -16,6 +18,7 @@ export const RegisterPage = () => {
     const [isChecking, setIsChecking] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showFaceRegistration, setShowFaceRegistration] = useState(false);
 
     const generateSuggestions = async (name) => {
         if (!name || name.length < 3) {
@@ -86,7 +89,7 @@ export const RegisterPage = () => {
 
         try {
             await authService.register(formData);
-            navigate('/login/student', { state: { message: 'Registration successful! Please login.' } });
+            setShowFaceRegistration(true);
         } catch (err) {
             console.error('Registration Error:', err);
             if (!err.response) {
@@ -100,7 +103,7 @@ export const RegisterPage = () => {
     };
 
 
-    return (
+    const registrationForm = (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 transition-colors duration-500 relative overflow-hidden">
             {/* Background elements */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold-metallic/5 dark:bg-gold-metallic/10 rounded-full filter blur-[120px] animate-pulse"></div>
@@ -265,4 +268,26 @@ export const RegisterPage = () => {
             </div>
         </div>
     );
+
+    if (showFaceRegistration) {
+        return (
+            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 transition-colors duration-500 relative overflow-hidden flex items-center justify-center">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold-metallic/5 dark:bg-gold-metallic/10 rounded-full filter blur-[120px] animate-pulse"></div>
+                <div className="relative max-w-2xl w-full mx-4">
+                    <Suspense fallback={
+                        <div className="flex items-center justify-center h-64">
+                            <div className="w-12 h-12 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin" />
+                        </div>
+                    }>
+                        <FaceRegistration
+                            onComplete={() => navigate('/login/student', { state: { message: 'Registration complete with face profile! Please login.' } })}
+                            onSkip={() => navigate('/login/student', { state: { message: 'Registration successful! You can register your face later from your profile.' } })}
+                        />
+                    </Suspense>
+                </div>
+            </div>
+        );
+    }
+
+    return registrationForm;
 };

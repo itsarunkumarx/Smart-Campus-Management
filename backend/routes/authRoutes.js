@@ -15,11 +15,13 @@ const {
     deleteAccount,
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
+const { faceLogin } = require('../controllers/faceController');
 
 const router = express.Router();
 
 router.post('/register', register);
 router.post('/login', login);
+router.post('/face-login', faceLogin);
 router.post('/logout', logout);
 router.post('/google', googleLogin);
 router.get('/check-username/:username', checkUsername);

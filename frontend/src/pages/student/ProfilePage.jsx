@@ -22,7 +22,11 @@ import {
     Github,
     Linkedin,
     Instagram,
-    Globe
+    Globe,
+    Phone,
+    Camera,
+    ShieldCheck,
+    AtSign
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { userService } from '../../services/userService';
@@ -195,19 +199,50 @@ export const ProfilePage = () => {
                     </div>
 
                     <div className="space-y-3 pt-6 border-t border-slate-100 dark:border-slate-800">
-                        {profile.privacy?.showEmail && (
-                            <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                                <Mail size={16} />
-                                <span className="text-[10px] font-bold uppercase tracking-widest">{profile.email}</span>
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Institutional Credentials</h4>
+                        
+                        {profile.email && (
+                            <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                                <Mail size={16} className="text-indigo-500 shrink-0" />
+                                <div className="overflow-hidden">
+                                    <p className="text-[8px] font-black text-slate-400 uppercase leading-none">Email Address</p>
+                                    <p className="text-xs font-bold truncate">{profile.email}</p>
+                                </div>
                             </div>
                         )}
-                        <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                            <MapPin size={16} />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">{profile.department}</span>
+
+                        <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                            <AtSign size={16} className="text-purple-500 shrink-0" />
+                            <div>
+                                <p className="text-[8px] font-black text-slate-400 uppercase leading-none">Username</p>
+                                <p className="text-xs font-bold">@{profile.username}</p>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                            <GraduationCap size={16} />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">{profile.role} · {profile.year} Year</span>
+
+                        {profile.phone && (
+                            <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                                <Phone size={16} className="text-emerald-500 shrink-0" />
+                                <div>
+                                    <p className="text-[8px] font-black text-slate-400 uppercase leading-none">Phone Contact</p>
+                                    <p className="text-xs font-bold">{profile.phone}</p>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                            <MapPin size={16} className="text-amber-500 shrink-0" />
+                            <div>
+                                <p className="text-[8px] font-black text-slate-400 uppercase leading-none">Department</p>
+                                <p className="text-xs font-bold">{profile.department || 'General Academic'}</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                            <GraduationCap size={16} className="text-blue-500 shrink-0" />
+                            <div>
+                                <p className="text-[8px] font-black text-slate-400 uppercase leading-none">Role & Academic Year</p>
+                                <p className="text-xs font-bold capitalize">{profile.role} · {profile.year ? `${profile.year}th Year` : 'Enrolled'}</p>
+                            </div>
                         </div>
                     </div>
 

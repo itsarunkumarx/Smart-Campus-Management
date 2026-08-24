@@ -9,7 +9,9 @@ import {
     Clock,
     Bell,
     Zap,
-    Users
+    Users,
+    Camera,
+    Shield
 } from 'lucide-react';
 
 export const Sidebar = () => {
@@ -32,6 +34,8 @@ export const Sidebar = () => {
         { path: '/search', label: 'Search', icon: '🔍' },
         { path: '/chat', label: 'Chat', icon: '💬' },
         { path: '/student/notifications', label: 'Notifications', icon: '🔔' },
+        { path: '/face-profile', label: 'Face Profile', icon: '📸' },
+        { path: '/access-control', label: 'Access Control', icon: '🔐' },
     ];
 
     const facultyLinks = [
@@ -46,6 +50,9 @@ export const Sidebar = () => {
         { path: '/tasks', label: 'Tasks', icon: '📝' },
         { path: '/search', label: 'Search', icon: '🔍' },
         { path: '/chat', label: 'Chat', icon: '💬' },
+        { path: '/faculty/face-attendance', label: 'Face Attendance', icon: '📸' },
+        { path: '/face-profile', label: 'Face Profile', icon: '🤳' },
+        { path: '/access-control', label: 'Access Control', icon: '🔐' },
     ];
 
     const adminLinks = [
@@ -59,6 +66,10 @@ export const Sidebar = () => {
         { path: '/tasks', label: 'Tasks', icon: '📝' },
         { path: '/search', label: 'Search', icon: '🔍' },
         { path: '/chat', label: 'Chat', icon: '💬' },
+        { path: '/admin/security', label: 'Security Events', icon: '🛡️' },
+        { path: '/admin/analytics', label: 'Analytics', icon: '📈' },
+        { path: '/face-profile', label: 'Face Profile', icon: '📸' },
+        { path: '/access-control', label: 'Access Control', icon: '🔐' },
     ];
 
     const guestLinks = [
@@ -74,6 +85,8 @@ export const Sidebar = () => {
         { path: '/search', label: 'Search', icon: <Users size={18} /> },
         { path: '/faculty/dashboard', label: 'Faculty Center', icon: <Navigation size={18} /> },
         { path: '/admin/dashboard', label: 'Admin HQ', icon: <Navigation size={18} /> },
+        { path: '/face-profile', label: 'Face Profile', icon: <Camera size={18} /> },
+        { path: '/access-control', label: 'Access Control', icon: <Shield size={18} /> },
     ];
 
 

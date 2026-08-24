@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useGoogleLogin } from '@react-oauth/google';
+
+const FaceLoginModal = lazy(() => import('../../components/face/FaceLoginModal').then(m => ({ default: m.FaceLoginModal })));
 
 export const LoginPage = () => {
     const { role } = useParams();
@@ -10,6 +12,7 @@ export const LoginPage = () => {
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showFaceLogin, setShowFaceLogin] = useState(false);
 
     const loginWithGoogle = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
@@ -47,6 +50,28 @@ export const LoginPage = () => {
         },
         onError: () => setError('Google Login initiation failed.')
     });
+
+    const handleFaceLoginSuccess = (data) => {
+        setShowFaceLogin(false);
+        const roleToUse = data.role || data.user?.role;
+        if (data.mustChangePassword || data.user?.mustChangePassword) {
+            navigate('/change-password');
+            return;
+        }
+        switch (roleToUse) {
+            case 'student':
+                navigate('/student/dashboard');
+                break;
+            case 'faculty':
+                navigate('/faculty/dashboard');
+                break;
+            case 'admin':
+                navigate('/admin/dashboard');
+                break;
+            default:
+                navigate('/');
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -97,7 +122,7 @@ export const LoginPage = () => {
 
     const roleInfo = getRoleDisplay();
 
-    return (
+    const content = (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center py-12 transition-colors duration-500 relative overflow-hidden">
             {/* Background blur elements */}
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gold-metallic/5 dark:bg-gold-metallic/10 rounded-full filter blur-[120px] animate-pulse"></div>
@@ -197,6 +222,16 @@ export const LoginPage = () => {
                                 <span>Continue with Google</span>
                             </button>
                         </div>
+
+                        <button
+                            type="button"
+                            disabled={loading}
+                            onClick={() => setShowFaceLogin(true)}
+                            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-3.5 px-4 rounded-xl font-bold transition-all shadow-sm hover:shadow-lg hover:shadow-indigo-500/20 active:scale-[0.98] disabled:opacity-50"
+                        >
+                            <span className="text-lg">📷</span>
+                            <span>Login with Face</span>
+                        </button>
                     </form>
 
                     <div className="mt-8 text-center space-y-3">
@@ -218,5 +253,20 @@ export const LoginPage = () => {
                 </div>
             </div>
         </div>
+    );
+
+    return (
+        <>
+            {content}
+            <Suspense fallback={null}>
+                {showFaceLogin && (
+                    <FaceLoginModal
+                        isOpen={showFaceLogin}
+                        onClose={() => setShowFaceLogin(false)}
+                        onSuccess={handleFaceLoginSuccess}
+                    />
+                )}
+            </Suspense>
+        </>
     );
 };

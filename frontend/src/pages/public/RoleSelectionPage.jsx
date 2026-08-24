@@ -1,11 +1,30 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, lazy, Suspense } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMousePosition } from '../../hooks/useMousePosition';
 import { motion, useSpring, useTransform } from 'framer-motion';
 
+const FaceLoginModal = lazy(() => import('../../components/face/FaceLoginModal').then(m => ({ default: m.FaceLoginModal })));
+
 export const RoleSelectionPage = () => {
+    const navigate = useNavigate();
     const [hoveredRole, setHoveredRole] = useState(null);
+    const [showFaceLogin, setShowFaceLogin] = useState(false);
     const { x, y } = useMousePosition();
+
+    const handleFaceLoginSuccess = (data) => {
+        setShowFaceLogin(false);
+        const roleToUse = data.role || data.user?.role;
+        if (data.mustChangePassword || data.user?.mustChangePassword) {
+            navigate('/change-password');
+            return;
+        }
+        switch (roleToUse) {
+            case 'student': navigate('/student/dashboard'); break;
+            case 'faculty': navigate('/faculty/dashboard'); break;
+            case 'admin': navigate('/admin/dashboard'); break;
+            default: navigate('/');
+        }
+    };
 
     // Smooth spring physics for parallax
     const mouseX = useSpring(x, { stiffness: 50, damping: 20 });
@@ -144,6 +163,18 @@ export const RoleSelectionPage = () => {
                     ))}
                 </div>
 
+                {/* Instant Face Login Button */}
+                <div className="flex flex-col items-center mb-12">
+                    <button
+                        onClick={() => setShowFaceLogin(true)}
+                        className="bg-gradient-to-r from-indigo-600 via-purple-600 to-amber-500 hover:from-indigo-500 hover:to-amber-400 text-white font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-3"
+                    >
+                        <span className="text-xl">📷</span>
+                        <span>Instant Face Login (All Roles)</span>
+                    </button>
+                    <p className="text-slate-400 text-xs mt-2 font-medium">No role selection needed — automatic role identification</p>
+                </div>
+
                 {/* Back Button */}
                 <div className="text-center">
                     <Link
@@ -155,6 +186,16 @@ export const RoleSelectionPage = () => {
                     </Link>
                 </div>
             </div>
+
+            <Suspense fallback={null}>
+                {showFaceLogin && (
+                    <FaceLoginModal
+                        isOpen={showFaceLogin}
+                        onClose={() => setShowFaceLogin(false)}
+                        onSuccess={handleFaceLoginSuccess}
+                    />
+                )}
+            </Suspense>
 
             <style>{`
         @keyframes blob {

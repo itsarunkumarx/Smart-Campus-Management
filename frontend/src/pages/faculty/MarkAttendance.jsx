@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     UserCheck,
@@ -12,7 +13,8 @@ import {
     ChevronRight,
     Save,
     AlertCircle,
-    UserX
+    UserX,
+    Camera
 } from 'lucide-react';
 import { facultyService } from '../../services';
 
@@ -108,6 +110,13 @@ export const MarkAttendance = () => {
                         Attendance Registry
                     </h1>
                     <p className="text-gray-500 dark:text-gray-400 mt-1 font-bold">Log academic consistency for your department sessions</p>
+                    <Link
+                        to="/faculty/face-attendance"
+                        className="mt-3 inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm hover:shadow-lg hover:shadow-indigo-500/20 active:scale-[0.98]"
+                    >
+                        <Camera size={16} />
+                        📷 Face Attendance
+                    </Link>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">

@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config(); // Reloaded env
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
@@ -27,6 +27,10 @@ const systemRoutes = require('./routes/systemRoutes');
 const generalRoutes = require('./routes/generalRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const faceRoutes = require('./routes/faceRoutes');
+const accessRoutes = require('./routes/accessRoutes');
+const securityRoutes = require('./routes/securityRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
 const path = require('path');
 
 const app = express();
@@ -65,7 +69,7 @@ app.use(cors({
     credentials: true,
 }));
 app.use(compression()); // Compress responses
-app.use(express.json()); // Parse JSON bodies
+app.use(express.json({ limit: '10mb' })); // Parse JSON bodies (increased for face embeddings)
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(cookieParser()); // Parse cookies
 // app.use(morgan('dev')); // Silenced for production noise
@@ -90,6 +94,10 @@ app.use('/api/message', messageRoutes);
 app.use('/api/admin/settings', systemRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/face', faceRoutes);
+app.use('/api/access', accessRoutes);
+app.use('/api/security', securityRoutes);
+app.use('/api/analytics', analyticsRoutes);
 app.use('/api', generalRoutes);
 
 // Health check

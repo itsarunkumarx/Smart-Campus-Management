@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import { authService } from '../services';
+import faceService from '../services/faceService';
 
 export const AuthContext = createContext();
 
@@ -49,8 +50,15 @@ export const AuthProvider = ({ children }) => {
         return data;
     };
 
+    const faceLogin = async (embedding, livenessScore) => {
+        const data = await faceService.faceLogin(embedding, livenessScore);
+        const userData = data.user || data;
+        setUser(userData);
+        return userData;
+    };
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, updateUser, updateProfile, checkAuth, googleLogin }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, updateUser, updateProfile, checkAuth, googleLogin, faceLogin }}>
             {children}
         </AuthContext.Provider>
     );
