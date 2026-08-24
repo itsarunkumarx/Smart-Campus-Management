@@ -6,8 +6,14 @@ const protect = async (req, res, next) => {
     try {
         let token;
 
-        // Get token from HTTP-only cookie
-        token = req.cookies.jwt;
+        // 1. Get token from HTTP-only cookie
+        if (req.cookies && req.cookies.jwt) {
+            token = req.cookies.jwt;
+        } 
+        // 2. Fallback to Authorization: Bearer <token> header for cross-domain deployments (e.g. Vercel <-> Render)
+        else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1];
+        }
 
         if (!token) {
             return res.status(401).json({ message: 'Not authorized, no token' });

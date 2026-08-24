@@ -171,8 +171,11 @@ const faceLogin = async (req, res) => {
       ipAddress: req.ip
     });
 
+    const token = generateToken(res, user._id);
+
     res.status(200).json({
       success: true,
+      token,
       confidencePercent: result.confidencePercent,
       confidence: result.similarity,
       _id: user._id,

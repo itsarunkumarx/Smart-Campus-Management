@@ -25,19 +25,31 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (credentials) => {
         const data = await authService.login(credentials);
+        if (data && data.token) {
+            localStorage.setItem('token', data.token);
+        }
         setUser(data);
         return data;
     };
 
     const googleLogin = async (token) => {
         const data = await authService.googleLogin(token);
+        if (data && data.token) {
+            localStorage.setItem('token', data.token);
+        }
         setUser(data);
         return data;
     };
 
     const logout = async () => {
-        await authService.logout();
-        setUser(null);
+        try {
+            await authService.logout();
+        } catch (err) {
+            // Ignore logout network errors
+        } finally {
+            localStorage.removeItem('token');
+            setUser(null);
+        }
     };
 
     const updateUser = (updatedData) => {
@@ -53,6 +65,9 @@ export const AuthProvider = ({ children }) => {
     const faceLogin = async (embedding, livenessScore) => {
         const data = await faceService.faceLogin(embedding, livenessScore);
         const userData = data.user || data;
+        if (data && data.token) {
+            localStorage.setItem('token', data.token);
+        }
         setUser(userData);
         return userData;
     };

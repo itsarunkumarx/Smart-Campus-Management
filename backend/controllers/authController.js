@@ -31,9 +31,10 @@ const register = async (req, res) => {
         });
 
         if (user) {
-            generateToken(res, user._id);
+            const token = generateToken(res, user._id);
 
             res.status(201).json({
+                token,
                 _id: user._id,
                 name: user.name,
                 username: user.username,
@@ -99,9 +100,10 @@ const login = async (req, res) => {
         }
 
         // Generate token
-        generateToken(res, user._id);
+        const token = generateToken(res, user._id);
 
         res.json({
+            token,
             _id: user._id,
             name: user.name,
             username: user.username,
@@ -477,9 +479,10 @@ const googleLogin = async (req, res) => {
         }
 
         // Generate institutional session token
-        generateToken(res, user._id);
+        const token = generateToken(res, user._id);
 
         res.json({
+            token,
             _id: user._id,
             name: user.name,
             username: user.username,

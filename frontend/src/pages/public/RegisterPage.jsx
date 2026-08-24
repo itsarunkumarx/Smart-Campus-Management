@@ -88,7 +88,10 @@ export const RegisterPage = () => {
         setLoading(true);
 
         try {
-            await authService.register(formData);
+            const res = await authService.register(formData);
+            if (res && res.token) {
+                localStorage.setItem('token', res.token);
+            }
             setShowFaceRegistration(true);
         } catch (err) {
             console.error('Registration Error:', err);

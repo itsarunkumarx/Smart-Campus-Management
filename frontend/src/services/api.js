@@ -42,8 +42,13 @@ const bustCache = (url) => {
     }
 };
 
-// Request interceptor — serve from cache for GET requests
+// Request interceptor — attach token + serve from cache for GET requests
 api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
     if (config.method === 'get') {
         const cacheKey = config.url + (config.params ? JSON.stringify(config.params) : '');
         const skipCache = NO_CACHE.has(config.url) || config.noCache;
